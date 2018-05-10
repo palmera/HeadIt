@@ -1,10 +1,9 @@
 package;
 
 import openfl.display.Sprite;
-import openfl.Lib;
 import openfl.events.Event;
 import flixel.FlxGame;
-import src.states.MenuState;
+import states.MenuState;
 
 /**
  * ...

@@ -1,14 +1,16 @@
-package src.states;
+package states;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
+import states.PracticeState;
 import openfl.Assets;
 
 class MenuState extends FlxState
 {
 
 	private var background:FlxSprite;
+	private var practiceState:PracticeState;
 	public function new()
 	{
 		super();
@@ -21,19 +23,23 @@ class MenuState extends FlxState
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/beach-hd.png'));
 		add(background);
+		practiceState = new PracticeState();
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
-		var btn_new = new FlxButton(init_x, 50, "New game", onNew);
-		var btn_load = new FlxButton(init_x, 80, "Load", onLoad);
-		add(btn_new);
-		add(btn_load);
+		var btn_practice = new FlxButton(init_x, 50, "Practice", onPractice);
+		var btn_quick_game = new FlxButton(init_x, 80, "Quick Game", onLoad);
+		var btn_tournament = new FlxButton(init_x, 110, "Tournament", onLoad);
+		add(btn_practice);
+		add(btn_quick_game);
+		add(btn_tournament);
 	}
 	
 
-	private function onNew():Void
+	private function onPractice():Void
 	{
-		// FlxG.switchState(new PlayState());
+		trace("olaa");
+		FlxG.switchState(practiceState);
 	}
 
 	private function onLoad():Void
