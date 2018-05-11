@@ -4,13 +4,15 @@ import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import openfl.Assets;
+import gameObjects.Team;
 
 class MenuState extends FlxState
 {
 
 	private var background:FlxSprite;
-	private var practiceState:PracticeState;
-	private var selectTeamState:SelectTeamState;
+	private var teams:List<Team>;
+	private var selected_team:Team;
+	
 	public function new()
 	{
 		super();
@@ -23,8 +25,6 @@ class MenuState extends FlxState
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/beach-hd.png'));
 		add(background);
-		practiceState = new PracticeState();
-		selectTeamState = new SelectTeamState();
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
@@ -41,12 +41,12 @@ class MenuState extends FlxState
 	private function onSelectTeam():Void
 	{
 		trace("select team menu");
-		FlxG.switchState(selectTeamState);
+		FlxG.switchState(new SelectTeamState());
 	}
 	private function onPractice():Void
 	{
 		trace("olaa");
-		FlxG.switchState(practiceState);
+		FlxG.switchState(new PracticeState());
 	}
 
 	private function onLoad():Void
