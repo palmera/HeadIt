@@ -11,7 +11,7 @@ class MenuState extends FlxState
 
 	private var background:FlxSprite;
 	private var teams:List<Team>;
-	private var selected_team:Team;
+	public var selected_team:Team;
 	
 	public function new()
 	{
@@ -21,6 +21,9 @@ class MenuState extends FlxState
 	override function create():Void
 	{
 		super.create();
+		
+		teams = System.GetTeams();
+		selected_team = teams.first();
 		
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/beach-hd.png'));
@@ -41,7 +44,7 @@ class MenuState extends FlxState
 	private function onSelectTeam():Void
 	{
 		trace("select team menu");
-		FlxG.switchState(new SelectTeamState());
+		FlxG.switchState(new SelectTeamState(teams));
 	}
 	private function onPractice():Void
 	{
@@ -53,5 +56,6 @@ class MenuState extends FlxState
 	{
 		trace("Load...");
 	}
+
 
 }
