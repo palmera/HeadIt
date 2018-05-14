@@ -1,11 +1,10 @@
 package states;
-import cpp.Void;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.ui.FlxButton;
 import openfl.Assets;
-import src.gameObjects.Team;
+import gameObjects.Team;
 
 class SelectTeamState extends FlxState
 {
