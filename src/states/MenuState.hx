@@ -14,7 +14,6 @@ class MenuState extends FlxState
 {
 
 	private var background:FlxSprite;
-	private var teams:TeamList;
 	
 	public function new()
 	{
@@ -25,8 +24,6 @@ class MenuState extends FlxState
 	{
 		super.create();
 		FlxG.scaleMode =new FixedScaleMode();
-
-		teams = System.GetTeams();
 		
 		background = Tools.getSpriteWithSize('img/beach-hd.png',FlxG.width,FlxG.height);
 		background.x = 0;
@@ -48,7 +45,7 @@ class MenuState extends FlxState
 	private function onSelectTeam():Void
 	{
 		trace("select team menu");
-		FlxG.switchState(new SelectTeamState(teams));
+		FlxG.switchState(new SelectTeamState());
 	}
 	private function onPractice():Void
 	{

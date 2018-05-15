@@ -13,15 +13,15 @@ class SelectTeamState extends FlxState
 	private var background:FlxSprite;
 	private var teams:TeamList;
 	private var current_team:Team;
-	public function new(teams:TeamList)
+	public function new()
 	{
 		super();
-		this.teams = teams;
 	}
 
 	override function create():Void
 	{
 		super.create();
+		this.teams = TeamList.instance;
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/traning-hd.png'));
 		add(background);
