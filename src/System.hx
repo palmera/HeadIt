@@ -8,6 +8,10 @@ class System
         return new Team(name);
     }
 	private static var teams_initialized = false;
+	public inline static var GRAVITY:Float = 600;
+	public inline static var SPEED_X:Float = 200;
+	
+	
     public static function InitializeTeams():TeamList {
 		var all_teams = TeamList.instance;
 		if (!teams_initialized) 

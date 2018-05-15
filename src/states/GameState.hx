@@ -2,6 +2,7 @@ package states;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import gameObjects.Ball;
 import openfl.Assets;
 import helpers.Tools;
 import gameObjects.Team;
@@ -24,8 +25,9 @@ class GameState extends FlxState
 	var maxTimerCounter:Float = 1;
 	var hasStarted:Bool;
 	
-	var ball:FlxSprite;
+	var ball:Ball;
 	var collided:Bool = false;
+	inline static var SPEED_X:Float = 200;
 
 	//var balls:[FlxSprite];
 	public function new(team1:Team,team2:Team) 
@@ -37,6 +39,7 @@ class GameState extends FlxState
 		loadAssets();
 		loadTeams();
 		hasStarted = false;
+		ball = new Ball();
 	}
 	
 	private function loadVariables(){
@@ -74,28 +77,63 @@ class GameState extends FlxState
 		FlxG.debugger.visible = true;
 		FlxG.debugger.drawDebug = true;
 		hasStarted = true;
-		ball = Tools.getSpriteWithSize("img/balls/Normal.png", FlxG.height * 0.12, FlxG.height * 0.12);
+		Tools.setSpriteWithSize(ball, "img/balls/Normal.png", FlxG.height * 0.12, FlxG.height * 0.12);
 		ball.x = positions[myPlayer.getCurrentPosition()]+myPlayer.getHeadOffset();
 		ball.y = 100;
-		ball.acceleration.y = 600;
-		//ball.updateHitbox();
+		ball.acceleration.y = System.GRAVITY;
+		ball.from = 0;
 		add(ball);
 	}
 	
 	function playerBallCollision(aHead:FlxObject, aBall:FlxObject):Void
 	{
-		trace("playerBall");
 		aBall.velocity.y = -200;
+		var nextPosition = calculateNextPosition(aBall);
+		trace('nextPosition: ' + nextPosition);
+		if(ball.to == -1){
+			ball.to = nextPosition;
+		} else {
+			ball.from = ball.to;
+			ball.to = nextPosition;
+		}
+		trace('ball from: ' + ball.from);
+		trace('ball to: ' + ball.to);
+		sendBallToPosition(ball.from, ball.to);
 	}
+	
+	function sendBallToPosition(currentPosition:Int, nextPosition:Int) 
+	{
+		if (nextPosition < 3) {
+			ball.velocity.x = -System.SPEED_X;
+		} else {
+			ball.velocity.x = System.SPEED_X;
+		}
+		var currentPoint = positions[currentPosition];
+		var nextPoint = positions[nextPosition];
+		var vy = Tools.calculateYSpeed(currentPoint, nextPoint);
+		ball.velocity.y = -vy;
+	}
+	
+	function calculateNextPosition(aBall:FlxObject):Int 
+	{
+		var ball = cast(aBall, Ball);
+		var nextPosition = -1;
+		if (!ball.towardsEnemy){
+			nextPosition = FlxG.random.int(0, 2);
+		} else {
+			nextPosition = FlxG.random.int(3, 5);
+		}
+		ball.towardsEnemy = !ball.towardsEnemy;
+		return nextPosition;
+	}
+	
 	override public function update(elapsed:Float):Void
 	{
-		
 		timerCounter += elapsed;
 		if (timerCounter > maxTimerCounter && !hasStarted){
 			startGame();
 			timerCounter = 0;
 		}
-		FlxG.overlap(myPlayer.head, ball, playerBallCollision);
 		if(hasStarted){
 			FlxG.overlap(myPlayer.head, ball, playerBallCollision);
 		}
