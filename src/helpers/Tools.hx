@@ -16,7 +16,7 @@ import openfl.Assets;
 		var widthScale = width / image.width;
 		var heightScale = height / image.height;
 		image.scale.set(widthScale, heightScale);
-		image.origin.set(0, 0);
+		//image.origin.set(0, 0);
 				image.updateHitbox();
 
 		return image;

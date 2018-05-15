@@ -71,22 +71,22 @@ class GameState extends FlxState
 	}
 	
 	private function startGame(){
+		FlxG.debugger.visible = true;
+		FlxG.debugger.drawDebug = true;
 		hasStarted = true;
 		ball = Tools.getSpriteWithSize("img/balls/Normal.png", FlxG.height * 0.12, FlxG.height * 0.12);
 		ball.x = positions[myPlayer.getCurrentPosition()]+myPlayer.getHeadOffset();
 		ball.y = 100;
 		ball.acceleration.y = 600;
-		//FlxG.overlap(ball, myPlayer.head, playerBallCollision);
+		//ball.updateHitbox();
+		//FlxG.overlap(myPlayer.head,ball, playerBallCollision);
 		add(ball);
 	}
 	
-	function playerBallCollision(aBall:FlxSprite, aHead:FlxSprite):Void
+	function playerBallCollision(aHead:FlxSprite, aBall:FlxSprite):Void
 	{
-		if(!collided){
-			aBall.velocity.y = -800;
-			collided = true;
-		}
-		
+		trace("playerBall");
+		aBall.velocity.y = -200;
 	}
 	override public function update(elapsed:Float):Void
 	{
@@ -97,8 +97,29 @@ class GameState extends FlxState
 			timerCounter = 0;
 		}
 		if(hasStarted){
-			var overlapping = FlxG.pixelPerfectOverlap(ball, myPlayer.head);
-			if(overlapping){
+			//var overlapping = FlxG.pixelPerfectOverlap(ball, myPlayer.head);
+			//if (overlapping){
+			//	trace("***");
+				//ball.velocity.y = -200;
+			//}
+			//FlxG.log.add("Ball y: " + ball.y + " height: " +ball.height + " -- Player y: " + myPlayer.y + " height: " + myPlayer.head.height);
+		//	var offset = myPlayer.getHeadOffset();
+		//	FlxG.log.add("Ball x: " + ball.x + " -- Player x: " + myPlayer.x + " offset: "+ myPlayer.head.x);
+
+			//136, 38 174
+			//170 128
+			var ballIsInsideHead:Bool = false;
+			if(ball.x > myPlayer.x/*+Offset*/){
+				if(ball.x < myPlayer.x /*+ myPlayer.getHeadOffset()*/+myPlayer.head.width){
+					if(ball.y + ball.height > myPlayer.y){
+						if(ball.y + ball.height < myPlayer.y + myPlayer.head.height){
+							ballIsInsideHead = true;
+							
+						} 
+					}
+				}
+			}
+			if(ballIsInsideHead){
 				ball.velocity.y = -200;
 			}
 
