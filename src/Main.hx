@@ -1,8 +1,8 @@
 package;
 
+import flixel.FlxGame;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import flixel.FlxGame;
 import states.MenuState;
 
 /**
@@ -25,6 +25,10 @@ class Main extends Sprite
 	private function init(e:Event):Void 
 	{
 		removeEventListener(Event.ADDED_TO_STAGE, init);
-		addChild(new FlxGame(800, 480, MenuState));
+		var game = new FlxGame(0, 0, MenuState); 
+		//game.x = 0; 
+		//game.y = 0;
+		
+		addChild(game);
 	}
 }

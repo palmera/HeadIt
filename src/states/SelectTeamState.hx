@@ -70,6 +70,7 @@ class SelectTeamState extends FlxState
 	
 	private function play():Void
 	{
+		FlxG.switchState(new GameState(new Team("Uruguay"),teams.get_team_at_pos(2)));
 		// menuState = new MenuState();
 		// menuState.selected_team = current_team;
 		// FlxG.switchState(menuState);

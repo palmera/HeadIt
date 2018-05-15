@@ -6,6 +6,9 @@ import flixel.ui.FlxButton;
 import openfl.Assets;
 import gameObjects.Team;
 import helpers.TeamList;
+import flixel.system.scaleModes.FixedScaleMode;
+import flixel.util.FlxColor;
+import helpers.Tools;
 
 class MenuState extends FlxState
 {
@@ -21,12 +24,16 @@ class MenuState extends FlxState
 	override function create():Void
 	{
 		super.create();
-		
+		FlxG.scaleMode =new FixedScaleMode();
+
 		teams = System.GetTeams();
 		
-		background = new FlxSprite();
-		background.loadGraphic(Assets.getBitmapData('img/beach-hd.png'));
+		background = Tools.getSpriteWithSize('img/beach-hd.png',FlxG.width,FlxG.height);
+		background.x = 0;
+		background.y = 0;
+
 		add(background);
+
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
@@ -51,6 +58,8 @@ class MenuState extends FlxState
 
 	private function onLoad():Void
 	{
+				FlxG.scaleMode =new FixedScaleMode();
+
 		trace("Load...");
 	}
 
