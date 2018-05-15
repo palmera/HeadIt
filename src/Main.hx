@@ -1,7 +1,9 @@
 package;
 
+import flixel.FlxGame;
 import openfl.display.Sprite;
-import openfl.Lib;
+import openfl.events.Event;
+import states.MenuState;
 
 /**
  * ...
@@ -16,6 +18,17 @@ class Main extends Sprite
 		
 		// Assets:
 		// openfl.Assets.getBitmapData("img/assetname.jpg");
+		addEventListener(Event.ADDED_TO_STAGE, init);
+		
 	}
-
+	
+	private function init(e:Event):Void 
+	{
+		removeEventListener(Event.ADDED_TO_STAGE, init);
+		var game = new FlxGame(0, 0, MenuState); 
+		//game.x = 0; 
+		//game.y = 0;
+		
+		addChild(game);
+	}
 }
