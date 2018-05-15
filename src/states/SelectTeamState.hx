@@ -5,15 +5,15 @@ import flixel.FlxState;
 import flixel.ui.FlxButton;
 import openfl.Assets;
 import gameObjects.Team;
+import helpers.TeamList;
 
 class SelectTeamState extends FlxState
 {
 
 	private var background:FlxSprite;
-	private var menuState:MenuState;
-	private var teams:List<Team>;
+	private var teams:TeamList;
 	private var current_team:Team;
-	public function new(teams:List<Team>)
+	public function new(teams:TeamList)
 	{
 		super();
 		this.teams = teams;
@@ -25,6 +25,10 @@ class SelectTeamState extends FlxState
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/traning-hd.png'));
 		add(background);
+		
+		current_team = teams.get_team_at_pos(0);
+		add(current_team.get_player());
+		
 		loadButtons();
 		
 	}
@@ -37,7 +41,7 @@ class SelectTeamState extends FlxState
 		var btn_back = new FlxButton(20, 20, "Back", back);
 		add(btn_back);
 		
-		var btn_save = new FlxButton(FlxG.width - 30, FlxG.height - 30, "Save", save);
+		var btn_save = new FlxButton(FlxG.width - 30, FlxG.height - 30, "PLAY", play);
 		add(btn_save);
 
 		var btn_previous_team = new FlxButton(left_x, 50, "<", previous_team);
@@ -45,23 +49,30 @@ class SelectTeamState extends FlxState
 		add(btn_next_team);
 		add(btn_previous_team);
 	}
-	
 	private function next_team():Void
-	{}
+	{
+		current_team = teams.get_next_team();
+		//trace(current_team.get_name());
+		current_team.get_player().update(1); //.update(1);
+	}
 	private function previous_team():Void
-	{}
+	{
+		current_team = teams.get_previous_team();
+		//trace(current_team.get_name());
+		current_team.get_player().update(1);// update(1);
+	}
 
 	private function back():Void
 	{
 		trace("vuelta");
-		FlxG.switchState(menuState);
+		FlxG.switchState(new MenuState());
 	}
 	
-	private function save():Void
+	private function play():Void
 	{
-		menuState = new MenuState();
-		menuState.selected_team = current_team;
-		FlxG.switchState(menuState);
+		// menuState = new MenuState();
+		// menuState.selected_team = current_team;
+		// FlxG.switchState(menuState);
 	}
 
 }

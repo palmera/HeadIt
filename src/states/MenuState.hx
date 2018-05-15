@@ -5,13 +5,13 @@ import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import openfl.Assets;
 import gameObjects.Team;
+import helpers.TeamList;
 
 class MenuState extends FlxState
 {
 
 	private var background:FlxSprite;
-	private var teams:List<Team>;
-	public var selected_team:Team;
+	private var teams:TeamList;
 	
 	public function new()
 	{
@@ -23,7 +23,6 @@ class MenuState extends FlxState
 		super.create();
 		
 		teams = System.GetTeams();
-		selected_team = teams.first();
 		
 		background = new FlxSprite();
 		background.loadGraphic(Assets.getBitmapData('img/beach-hd.png'));
@@ -32,13 +31,11 @@ class MenuState extends FlxState
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
 		var btn_practice = new FlxButton(init_x, 50, "Practice", onPractice);
-		var btn_quick_game = new FlxButton(init_x, 80, "Quick Game", onLoad);
+		var btn_quick_game = new FlxButton(init_x, 80, "Quick Game", onSelectTeam);
 		var btn_tournament = new FlxButton(init_x, 110, "Tournament", onLoad);
-		var btn_select_team = new FlxButton(init_x, 140, "Select team", onSelectTeam);
 		add(btn_practice);
 		add(btn_quick_game);
 		add(btn_tournament);
-		add(btn_select_team);
 	}
 	
 	private function onSelectTeam():Void
