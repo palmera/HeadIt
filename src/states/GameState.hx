@@ -1,4 +1,5 @@
 package states;
+import flash.utils.Timer;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -30,9 +31,9 @@ class GameState extends FlxState
 	var collided:Bool = false;
 	inline static var SPEED_X:Float = 200;
 	
-	private var disabledCollision:Bool;
-	private var disabledCollisionForPlayer:Bool;
-	private var disabledCollisionForOpponent:Bool;
+	//private var disabledCollision:Bool;
+	private var playerOpenForCollision:Bool;
+	private var opponentOpenForCollision:Bool;
 
 	override function create():Void
 	{
@@ -45,6 +46,7 @@ class GameState extends FlxState
 	{
 		super();
 		myPlayer = team1;
+		myPlayer.isEnemy = false;
 		opponent = team2;
 		opponent.isEnemy = true;
 		loadVariables();
@@ -86,6 +88,12 @@ class GameState extends FlxState
 	}
 	
 	private function startGame(){
+		var testTimer = new haxe.Timer(100);
+		testTimer.run = function ()
+		{
+			trace('test timer');
+			testTimer.stop();
+		};
 		FlxG.debugger.visible = true;
 		FlxG.debugger.drawDebug = true;
 		hasStarted = true;
@@ -95,27 +103,47 @@ class GameState extends FlxState
 		ball.acceleration.y = System.GRAVITY;
 		ball.from = 0;
 		add(ball);
-		disabledCollision = false;
-		disabledCollisionForPlayer = false;
-		disabledCollisionForOpponent = false;
+		//disabledCollision = false;
+		playerOpenForCollision = true;
+		opponentOpenForCollision = true;
 	}
 	
 	function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
 	{
+		var ball = cast(aBall, Ball);
 		
-		trace('outside');
-		if (!disabledCollision) 
-		{
-			handleBall(aBall);
-			disabledCollision = true;
-		} else {
-			var timer = new haxe.Timer(400); // 1000ms delay
-			timer.run = function() { 
-				trace('inside timer');
-				disabledCollision = false;
-				timer.stop();
+		var collidedWithPlayer = ball.x < FlxG.width / 2;
+		var collidedWithOpponent = ball.x > FlxG.width / 2;
+		
+		if (collidedWithPlayer) {
+			if (playerOpenForCollision) {
+				trace('entra a player colission');
+				handleBall(aBall);
+				playerOpenForCollision = false;
+			} else {
+				var playerTimer = new haxe.Timer(400);
+				playerTimer.run = function() { 
+					playerOpenForCollision = true;
+					trace('player timer');
+					playerTimer.stop();
+				}
 			}
 			
+		} 
+		
+		if (collidedWithOpponent) {
+			if (opponentOpenForCollision) {			
+				trace('entra a opponent colission');
+				handleBall(aBall);
+				opponentOpenForCollision = false;	
+			} else {
+				var opponentTimer = new haxe.Timer(400);
+				opponentTimer.run = function() { 
+					opponentOpenForCollision = true;
+					trace('opponent timer');
+					opponentTimer.stop();
+				}
+			}
 		}
 		
 		
@@ -124,13 +152,15 @@ class GameState extends FlxState
 	
 	function sendBallToPosition(currentPosition:Int, nextPosition:Int) 
 	{
+		var ballOffset = 0;
 		if (nextPosition < 3) {
 			ball.velocity.x = -System.SPEED_X;
 		} else {
 			ball.velocity.x = System.SPEED_X;
+			ballOffset = 20;
 		}
 		var currentPoint = positions[currentPosition];
-		var nextPoint = positions[nextPosition];
+		var nextPoint = positions[nextPosition] - ballOffset;
 		var vy = Tools.calculateYSpeed(currentPoint, nextPoint);
 		ball.velocity.y = -vy;
 	}
@@ -156,8 +186,8 @@ class GameState extends FlxState
 			timerCounter = 0;
 		}
 		if (hasStarted){
-			FlxG.overlap(cast(myPlayer, FlxObject), ball, playerBallCollision);
-			FlxG.overlap(cast(opponent, FlxObject), ball, playerBallCollision);
+			FlxG.overlap(myPlayer.head, ball, playerBallCollision);
+			FlxG.overlap(opponent.head, ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)
@@ -176,9 +206,9 @@ class GameState extends FlxState
 	
 	function updateOpponentPosition(nextPosition:Int) 
 	{
-		trace('opponent nueva pos: ' + nextPosition);
-		trace('opponent nueva positions: ' + positions[nextPosition]);
-		if(nextPosition >= 3){
+		if (nextPosition >= 3){
+			trace('opponent nueva pos: ' + nextPosition);
+			trace('opponent nueva positions: ' + positions[nextPosition]);
 			opponent.x = positions[nextPosition];
 		}
 	}
