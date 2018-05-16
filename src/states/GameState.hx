@@ -31,6 +31,8 @@ class GameState extends FlxState
 	inline static var SPEED_X:Float = 200;
 	
 	private var disabledCollision:Bool;
+	private var disabledCollisionForPlayer:Bool;
+	private var disabledCollisionForOpponent:Bool;
 
 	override function create():Void
 	{
@@ -44,6 +46,7 @@ class GameState extends FlxState
 		super();
 		myPlayer = team1;
 		opponent = team2;
+		opponent.isEnemy = true;
 		loadVariables();
 		loadAssets();
 		loadTeams();
@@ -93,26 +96,17 @@ class GameState extends FlxState
 		ball.from = 0;
 		add(ball);
 		disabledCollision = false;
+		disabledCollisionForPlayer = false;
+		disabledCollisionForOpponent = false;
 	}
-	function playerBallCollision(aHead:FlxObject, aBall:FlxObject):Void
+	
+	function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
 	{
+		
 		trace('outside');
 		if (!disabledCollision) 
 		{
-			trace('inside');
-			aBall.velocity.y = -200;
-			var nextPosition = calculateNextPosition(aBall);
-			trace('nextPosition: ' + nextPosition);
-			if(ball.to == -1){
-				ball.to = nextPosition;
-			} else {
-				ball.from = ball.to;
-				ball.to = nextPosition;
-			}
-			trace('ball from: ' + ball.from);
-			trace('ball to: ' + ball.to);
-			sendBallToPosition(ball.from, ball.to);
-			updateOpponentPosition(ball.to);
+			handleBall(aBall);
 			disabledCollision = true;
 		} else {
 			var timer = new haxe.Timer(400); // 1000ms delay
@@ -141,9 +135,9 @@ class GameState extends FlxState
 		ball.velocity.y = -vy;
 	}
 	
-	function calculateNextPosition(aBall:FlxObject):Int 
+	function calculateNextPosition(ball:Ball):Int 
 	{
-		var ball = cast(aBall, Ball);
+		// var ball = cast(aBall, Ball);
 		var nextPosition = -1;
 		if (ball.towardsEnemy){
 			nextPosition = FlxG.random.int(0, 2);
@@ -161,9 +155,9 @@ class GameState extends FlxState
 			startGame();
 			timerCounter = 0;
 		}
-		if(hasStarted){
-			FlxG.overlap(myPlayer.head, ball, playerBallCollision);
-			FlxG.overlap(opponent.head, ball, playerBallCollision);
+		if (hasStarted){
+			FlxG.overlap(cast(myPlayer, FlxObject), ball, playerBallCollision);
+			FlxG.overlap(cast(opponent, FlxObject), ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)
@@ -192,5 +186,24 @@ class GameState extends FlxState
 	{
 		trace("vuelta");
 		FlxG.switchState(new SelectTeamState());
+	}
+	
+	function handleBall(aBall:FlxObject):Void 
+	{
+		var ball = cast(aBall, Ball);
+		trace('inside');
+		ball.velocity.y = -200;
+		var nextPosition = calculateNextPosition(ball);
+		trace('nextPosition: ' + nextPosition);
+		if(ball.to == -1){
+			ball.to = nextPosition;
+		} else {
+			ball.from = ball.to;
+			ball.to = nextPosition;
+		}
+		trace('ball from: ' + ball.from);
+		trace('ball to: ' + ball.to);
+		sendBallToPosition(ball.from, ball.to);
+		updateOpponentPosition(ball.to);
 	}
 }

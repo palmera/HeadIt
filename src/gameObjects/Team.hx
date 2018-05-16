@@ -13,6 +13,7 @@ class Team extends FlxSpriteGroup {
     var name:String;
     var id:Int;
 	var position:Int;
+	public var isEnemy:Bool;
 	
 	var playerHeight:Float;
 	var playerWidth:Float;
@@ -20,6 +21,7 @@ class Team extends FlxSpriteGroup {
     public function new(name:String) {
 		super();
         this.name = name;
+		this.isEnemy = false;
 		playerHeight = FlxG.height * 0.4;
 		playerWidth = playerHeight * 315 / 678;
 		position = 0;
