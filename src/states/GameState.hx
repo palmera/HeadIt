@@ -2,6 +2,7 @@ package states;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.ui.FlxButton;
 import gameObjects.Ball;
 import openfl.Assets;
 import helpers.Tools;
@@ -29,6 +30,12 @@ class GameState extends FlxState
 	var collided:Bool = false;
 	inline static var SPEED_X:Float = 200;
 
+	override function create():Void
+	{
+		super.create();
+		var btn_back = new FlxButton(20, 20, "Back", back);
+		add(btn_back);
+	}
 	//var balls:[FlxSprite];
 	public function new(team1:Team,team2:Team) 
 	{
@@ -180,5 +187,9 @@ class GameState extends FlxState
 			opponent.x = positions[nextPosition];
 		}
 	}
-	
+	private function back():Void
+	{
+		trace("vuelta");
+		FlxG.switchState(new SelectTeamState());
+	}
 }
