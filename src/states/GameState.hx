@@ -83,22 +83,41 @@ class GameState extends FlxState
 		ball.acceleration.y = System.GRAVITY;
 		ball.from = 0;
 		add(ball);
+		disabledCollision = false;
 	}
-	
+	private var disabledCollision:Bool;
 	function playerBallCollision(aHead:FlxObject, aBall:FlxObject):Void
 	{
-		aBall.velocity.y = -200;
-		var nextPosition = calculateNextPosition(aBall);
-		trace('nextPosition: ' + nextPosition);
-		if(ball.to == -1){
-			ball.to = nextPosition;
+		trace('outside');
+		if (!disabledCollision) 
+		{
+			trace('inside');
+			aBall.velocity.y = -200;
+			var nextPosition = calculateNextPosition(aBall);
+			trace('nextPosition: ' + nextPosition);
+			if(ball.to == -1){
+				ball.to = nextPosition;
+			} else {
+				ball.from = ball.to;
+				ball.to = nextPosition;
+			}
+			trace('ball from: ' + ball.from);
+			trace('ball to: ' + ball.to);
+			sendBallToPosition(ball.from, ball.to);
+			updateOpponentPosition(ball.to);
+			disabledCollision = true;
 		} else {
-			ball.from = ball.to;
-			ball.to = nextPosition;
+			var timer = new haxe.Timer(200); // 1000ms delay
+			timer.run = function() { 
+				trace('inside timer');
+				disabledCollision = false;
+				timer.stop();
+			}
+			
 		}
-		trace('ball from: ' + ball.from);
-		trace('ball to: ' + ball.to);
-		sendBallToPosition(ball.from, ball.to);
+		
+		
+		
 	}
 	
 	function sendBallToPosition(currentPosition:Int, nextPosition:Int) 
@@ -118,7 +137,7 @@ class GameState extends FlxState
 	{
 		var ball = cast(aBall, Ball);
 		var nextPosition = -1;
-		if (!ball.towardsEnemy){
+		if (ball.towardsEnemy){
 			nextPosition = FlxG.random.int(0, 2);
 		} else {
 			nextPosition = FlxG.random.int(3, 5);
@@ -136,6 +155,7 @@ class GameState extends FlxState
 		}
 		if(hasStarted){
 			FlxG.overlap(myPlayer.head, ball, playerBallCollision);
+			FlxG.overlap(opponent.head, ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)
@@ -150,6 +170,15 @@ class GameState extends FlxState
 			myPlayer.x = positions[myPlayer.getCurrentPosition()];
 		}
 		super.update(elapsed);
+	}
+	
+	function updateOpponentPosition(nextPosition:Int) 
+	{
+		trace('opponent nueva pos: ' + nextPosition);
+		trace('opponent nueva positions: ' + positions[nextPosition]);
+		if(nextPosition >= 3){
+			opponent.x = positions[nextPosition];
+		}
 	}
 	
 }

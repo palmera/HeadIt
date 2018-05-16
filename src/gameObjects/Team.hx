@@ -26,9 +26,9 @@ class Team extends FlxSpriteGroup {
 		setHead();
 		setBody();
 		setShirt();
-		
-		
     }
+
+	
 	private function setHead():Void{
 		var headWidth = playerWidth * 216 / 315;
 		var headHeight = playerHeight * 268 / 678;
@@ -66,6 +66,7 @@ class Team extends FlxSpriteGroup {
 	public function get_name():String {
 		return this.name;
 	}
+
 	public function get_player():Team {
 		return this;
 	}

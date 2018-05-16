@@ -1,3 +1,4 @@
+
 package states;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -6,23 +7,23 @@ import flixel.ui.FlxButton;
 import openfl.Assets;
 import helpers.Tools;
 
-class PracticeState extends FlxState
+/**
+ * ...
+ * @author Alejandro Grunwaldt
+ */
+class TournamentState  extends FlxState
 {
-
 	private var background:FlxSprite;
-	private var menuState:MenuState;
-	public function new()
+	
+	public function new() 
 	{
 		super();
-		trace("pepe");
 	}
-
+	
 	override function create():Void
 	{
 		super.create();
-		menuState = new MenuState();
-		trace("juan");
-		background = Tools.getSpriteWithSize('img/practiceBack.png',FlxG.width,FlxG.height);
+		background = Tools.getSpriteWithSize('img/tournamentBack.png',FlxG.width,FlxG.height);
 		background.x = 0;
 		background.y = 0;
 		add(background);
@@ -34,11 +35,16 @@ class PracticeState extends FlxState
 
 	}
 	
-
 	private function back():Void
 	{
 		trace("vuelta");
 		FlxG.switchState(new SelectModeState());
 	}
-
+	
 }
+
+
+
+
+	
+	

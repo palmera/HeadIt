@@ -9,7 +9,7 @@ class System
     }
 	private static var teams_initialized = false;
 	public inline static var GRAVITY:Float = 600;
-	public inline static var SPEED_X:Float = 200;
+	public inline static var SPEED_X:Float = 300;
 	
 	
     public static function InitializeTeams():TeamList {

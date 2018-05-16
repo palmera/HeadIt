@@ -25,7 +25,7 @@ class MenuState extends FlxState
 		super.create();
 		FlxG.scaleMode =new FixedScaleMode();
 		
-		background = Tools.getSpriteWithSize('img/beach-hd.png',FlxG.width,FlxG.height);
+		background = Tools.getSpriteWithSize('img/home3.png',FlxG.width,FlxG.height);
 		background.x = 0;
 		background.y = 0;
 
@@ -34,15 +34,20 @@ class MenuState extends FlxState
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
-		var btn_practice = new FlxButton(init_x, 50, "Practice", onPractice);
-		var btn_quick_game = new FlxButton(init_x, 80, "Quick Game", onSelectTeam);
-		var btn_tournament = new FlxButton(init_x, 110, "Tournament", onLoad);
+		/*var btn_practice = new FlxButton(80, 225, "Practice", onPractice);
+		var btn_quick_game = new FlxButton(init_x, 225, "Quick Game", onSelectTeam);
+		var btn_tournament = new FlxButton(400, 225, "Tournament", onLoad);
 		add(btn_practice);
 		add(btn_quick_game);
-		add(btn_tournament);
+		add(btn_tournament);*/
+		
+		var btn_play = new FlxButton(165, 225, "Play", onPlay);
+		var btn_credits = new FlxButton(320, 225, "Credits", onCredits);
+		add(btn_play);
+		add(btn_credits);
 	}
 	
-	private function onSelectTeam():Void
+	/*private function onSelectTeam():Void
 	{
 		trace("select team menu");
 		FlxG.switchState(new SelectTeamState());
@@ -58,6 +63,14 @@ class MenuState extends FlxState
 				FlxG.scaleMode =new FixedScaleMode();
 
 		trace("Load...");
+	}*/
+	
+	private function onPlay(): Void{
+		FlxG.switchState(new SelectModeState());
+	}
+	
+	private function onCredits(): Void{
+		
 	}
 
 
