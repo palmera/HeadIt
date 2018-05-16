@@ -29,6 +29,8 @@ class GameState extends FlxState
 	var ball:Ball;
 	var collided:Bool = false;
 	inline static var SPEED_X:Float = 200;
+	
+	private var disabledCollision:Bool;
 
 	override function create():Void
 	{
@@ -36,7 +38,7 @@ class GameState extends FlxState
 		var btn_back = new FlxButton(20, 20, "Back", back);
 		add(btn_back);
 	}
-	//var balls:[FlxSprite];
+	
 	public function new(team1:Team,team2:Team) 
 	{
 		super();
@@ -92,7 +94,6 @@ class GameState extends FlxState
 		add(ball);
 		disabledCollision = false;
 	}
-	private var disabledCollision:Bool;
 	function playerBallCollision(aHead:FlxObject, aBall:FlxObject):Void
 	{
 		trace('outside');
@@ -114,7 +115,7 @@ class GameState extends FlxState
 			updateOpponentPosition(ball.to);
 			disabledCollision = true;
 		} else {
-			var timer = new haxe.Timer(200); // 1000ms delay
+			var timer = new haxe.Timer(400); // 1000ms delay
 			timer.run = function() { 
 				trace('inside timer');
 				disabledCollision = false;

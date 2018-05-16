@@ -41,7 +41,7 @@ class Team extends FlxSpriteGroup {
 		var shirtWidth = playerWidth * 300 / 315;
 		var shirtHeight = playerHeight * 340 / 678;
 		this.shirt = Tools.getSpriteWithSize("img/players/" + name+"Shirt.png", shirtWidth, shirtHeight);
-		this.shirt.x = playerWidth * 15 / 315;
+		this.shirt.x = playerWidth / 1000 - 3;
 		this.shirt.y = playerHeight * 229 / 678;
 		this.add(this.shirt);
 	}
