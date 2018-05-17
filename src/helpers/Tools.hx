@@ -2,6 +2,7 @@ package helpers;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import openfl.Assets;
+import openfl.geom.Point;
 
  class Tools 
 {
@@ -32,6 +33,17 @@ import openfl.Assets;
 		var vy = (System.GRAVITY * dt) / 2;
 		trace('vy: ' + vy);
 		return vy;
+	}
+	
+	public static function toRadians(degrees:Float):Float {
+		return (Math.PI * degrees) / 180;
+	}
+	
+	
+	static public function normalize(p0:Point) 
+	{
+		var m = 1/Math.sqrt(p0.x*p0.x + p0.y*p0.y);
+        return { x:p0.x*m, y:p0.y*m};
 	}
 	
 }

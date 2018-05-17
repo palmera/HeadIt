@@ -1,8 +1,12 @@
 package states;
+import flash.geom.Point;
 import flash.utils.Timer;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxMatrix;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVector;
 import flixel.ui.FlxButton;
 import gameObjects.Ball;
 import openfl.Assets;
@@ -61,6 +65,7 @@ class GameState extends FlxState
 		var offset = (FlxG.width / 6 - myPlayer.getWidth()) / 2;
 		for (i in 0...6){
 			var pos = offset + i * FlxG.width / 6;
+			trace('pos ' + i + ': ' + pos);
 			positions.push(pos);
 		}
 		
@@ -159,11 +164,48 @@ class GameState extends FlxState
 			ball.velocity.x = System.SPEED_X;
 			ballOffset = 20;
 		}
+		trace('sendBallToPosition nextPosition: ' + nextPosition);
 		var currentPoint = positions[currentPosition];
 		var nextPoint = positions[nextPosition] - ballOffset;
 		var vy = Tools.calculateYSpeed(currentPoint, nextPoint);
-		ball.velocity.y = -vy;
+		
+		var a = BallisticVel(new FlxPoint(nextPoint, 170-ball.health), 60, ball);
+		trace('ballistic: ' + a);
+		
+		ball.velocity.y = -Math.abs(a.y);//-vy;
+		ball.velocity.x = a.x;
 	}
+	function BallisticVel(target:FlxPoint, angle:Float, ball:Ball):FlxVector{
+		trace('target: ' + target);
+		trace('angle: ' + angle);
+		trace('ball: ' + ball);
+		var dir = target.subtractPoint(ball.getPosition());
+		trace('dir: ' + dir);
+		var h = dir.y;  // get height difference
+		dir.y = 0;  // retain only the horizontal direction
+		
+		
+		var dist = dir.x;  // get horizontal distance
+		trace('dist: ' + dist);
+		
+		var a = Tools.toRadians(angle);  // convert angle to radians
+		dir.y = dist * Math.tan(a);  // set dir to the elevation angle
+		dist += h / Math.tan(a);  // correct for small height differences
+		// calculate the velocity magnitude
+		var vel;
+		var l = dist * System.GRAVITY / Math.sin(2 * a);
+		if (l < 0) l = -l;
+		trace('l: ' + l);
+		vel = Math.sqrt(l);
+		trace('vel: ' + vel);
+//		Debug.Log ("Physics.gravity.magnitud: "+Physics.gravity.magnitude);
+//		Debug.Log ("a: "+a);
+//		Debug.Log("dir: "+dir);
+		var ret = dir.toVector().normalize().scale(vel);
+		trace('ret: ' + ret);
+		return ret;
+	}
+
 	
 	function calculateNextPosition(ball:Ball):Int 
 	{
