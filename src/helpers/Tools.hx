@@ -1,6 +1,9 @@
 package helpers;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVector;
+import gameObjects.Ball;
 import openfl.Assets;
 import openfl.geom.Point;
 
@@ -26,24 +29,36 @@ import openfl.geom.Point;
 		originalSprite.updateHitbox();
 	}
 	
-	public static function calculateYSpeed(x1:Float, x2:Float):Float{
-		var dx = Math.abs(x1 - x2);
-		var dt = dx / System.SPEED_X;
-		
-		var vy = (System.GRAVITY * dt) / 2;
-		trace('vy: ' + vy);
-		return vy;
-	}
-	
 	public static function toRadians(degrees:Float):Float {
 		return (Math.PI * degrees) / 180;
 	}
 	
-	
-	static public function normalize(p0:Point) 
-	{
-		var m = 1/Math.sqrt(p0.x*p0.x + p0.y*p0.y);
-        return { x:p0.x*m, y:p0.y*m};
+	public static function BallisticVel(target:FlxPoint, angle:Float, ball:Ball):FlxVector{
+		trace('target: ' + target);
+		trace('angle: ' + angle);
+		trace('ball: ' + ball);
+		var dir = target.subtractPoint(ball.getPosition());
+		trace('dir: ' + dir);
+		var h = dir.y;  // get height difference
+		dir.y = 0;  // retain only the horizontal direction
+		
+		
+		var dist = dir.x;  // get horizontal distance
+		trace('dist: ' + dist);
+		
+		var a = Tools.toRadians(angle);  // convert angle to radians
+		dir.y = dist * Math.tan(a);  // set dir to the elevation angle
+		dist += h / Math.tan(a);  // correct for small height differences
+		// calculate the velocity magnitude
+		var vel;
+		var l = dist * System.GRAVITY / Math.sin(2 * a);
+		if (l < 0) l = -l;
+		trace('l: ' + l);
+		vel = Math.sqrt(l);
+		trace('vel: ' + vel);
+		var ret = dir.toVector().normalize().scale(vel);
+		trace('ret: ' + ret);
+		return ret;
 	}
 	
 }
