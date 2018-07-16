@@ -31,39 +31,13 @@ class MenuState extends FlxState
 
 		add(background);
 
-
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
-
-		/*var btn_practice = new FlxButton(80, 225, "Practice", onPractice);
-		var btn_quick_game = new FlxButton(init_x, 225, "Quick Game", onSelectTeam);
-		var btn_tournament = new FlxButton(400, 225, "Tournament", onLoad);
-		add(btn_practice);
-		add(btn_quick_game);
-		add(btn_tournament);*/
 		
 		var btn_play = new FlxButton(165, 225, "Play", onPlay);
 		var btn_credits = new FlxButton(320, 225, "Credits", onCredits);
 		add(btn_play);
 		add(btn_credits);
 	}
-	
-	/*private function onSelectTeam():Void
-	{
-		trace("select team menu");
-		FlxG.switchState(new SelectTeamState());
-	}
-	private function onPractice():Void
-	{
-		trace("olaa");
-		FlxG.switchState(new PracticeState());
-	}
-
-	private function onLoad():Void
-	{
-				FlxG.scaleMode =new FixedScaleMode();
-
-		trace("Load...");
-	}*/
 	
 	private function onPlay(): Void{
 		FlxG.switchState(new SelectModeState());
