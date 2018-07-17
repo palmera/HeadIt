@@ -6,7 +6,7 @@ package helpers;
  */
 class Sounds 
 {
-	public static var BACKGROUND = 'sounds/Batucada.mp3';
+	public static var BACKGROUND = 'music/Batucada.ogg';
 	public static var GOAL = '';
 	public static var HEAD_BALL = '';
 	public static var BUTTON_CLICK = '';

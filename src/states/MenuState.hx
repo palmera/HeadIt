@@ -10,6 +10,7 @@ import flixel.system.scaleModes.FixedScaleMode;
 import flixel.util.FlxColor;
 import helpers.Tools;
 import gameObjects.Button;
+import helpers.SoundManager;
 
 class MenuState extends FlxState
 {
@@ -26,6 +27,7 @@ class MenuState extends FlxState
 	override function create():Void
 	{
 		super.create();
+		SoundManager.Instance().playMusic();
 		// FlxG.scaleMode =new FixedScaleMode();
 		
 		background = Tools.getSpriteWithSize('img/home3.png',FlxG.width,FlxG.height);
@@ -34,10 +36,11 @@ class MenuState extends FlxState
 
 		add(background);
 		
-		btn_play = new Button(165, 225, 'img/Buttons/play1.png', 'img/Buttons/play2.png', 'img/Buttons/play3.png');
+		var halfWidth = Std.int(FlxG.width/2);
+		btn_play = new Button(halfWidth - 109 - 50, 325, 'img/Buttons/play.png', 'img/Buttons/playHover.png', 'img/Buttons/playClick.png');
 		btn_play.btn.onUp.callback = onPlay;
 		
-		btn_credits = new Button(320, 225, 'img/Buttons/credits1.png', 'img/Buttons/credits2.png', 'img/Buttons/credits3.png');
+		btn_credits = new Button(halfWidth + 50, 325, 'img/Buttons/credits.png', 'img/Buttons/creditsHover.png', 'img/Buttons/creditsClick.png');
 		btn_credits.btn.onUp.callback = onCredits;
 		
 		add(btn_play.btn);
