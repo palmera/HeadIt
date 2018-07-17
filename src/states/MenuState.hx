@@ -9,11 +9,14 @@ import helpers.TeamList;
 import flixel.system.scaleModes.FixedScaleMode;
 import flixel.util.FlxColor;
 import helpers.Tools;
+import gameObjects.Button;
 
 class MenuState extends FlxState
 {
-
+	
 	private var background:FlxSprite;
+	private var btn_play: Button;
+	private var btn_credits: Button;
 	
 	public function new()
 	{
@@ -30,13 +33,15 @@ class MenuState extends FlxState
 		background.y = 0;
 
 		add(background);
-
-		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 		
-		var btn_play = new FlxButton(165, 225, "Play", onPlay);
-		var btn_credits = new FlxButton(320, 225, "Credits", onCredits);
-		add(btn_play);
-		add(btn_credits);
+		btn_play = new Button(165, 225, 'img/Buttons/play1.png', 'img/Buttons/play2.png', 'img/Buttons/play3.png');
+		btn_play.btn.onUp.callback = onPlay;
+		
+		btn_credits = new Button(320, 225, 'img/Buttons/credits1.png', 'img/Buttons/credits2.png', 'img/Buttons/credits3.png');
+		btn_credits.btn.onUp.callback = onCredits;
+		
+		add(btn_play.btn);
+		add(btn_credits.btn);
 	}
 	
 	private function onPlay(): Void{
@@ -46,6 +51,4 @@ class MenuState extends FlxState
 	private function onCredits(): Void{
 		
 	}
-
-
 }

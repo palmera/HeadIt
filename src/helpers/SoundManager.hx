@@ -6,11 +6,14 @@ package helpers;
  */
 class SoundManager 
 {
-	private instance;
-	public static Instance(
-	public function new() 
-	{
-		
+	private static instance:SoundManager;
+	
+	public static Instance():SoundManager {
+		if(instance == null){
+			instance = new SoundManager();
+		}
+		return instance;
 	}
+	
 	
 }

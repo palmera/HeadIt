@@ -3,6 +3,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
+import gameObjects.Button;
 import openfl.Assets;
 import gameObjects.Team;
 import helpers.TeamList;
@@ -18,9 +19,9 @@ import helpers.Tools;
 class SelectModeState extends FlxState
 {
 	private var background:FlxSprite;
-	private var btn_practice: FlxButton;
-	private var btn_quick_game: FlxButton;
-	private var btn_tournament: FlxButton;
+	private var btn_practice: Button;
+	private var btn_quick_game: Button;
+	private var btn_tournament: Button;
 	
 	public function new() 
 	{
@@ -38,79 +39,32 @@ class SelectModeState extends FlxState
 
 		add(background);
 
-
-		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
-
-		btn_practice = new FlxButton(80, 0, "", onPractice);
-		btn_practice.loadGraphic('img/practiceMode.png');
-		btn_practice.onOver.callback = practiceHover;
-		btn_practice.onOut.callback = practiceOnOut;
-		btn_quick_game = new FlxButton(0, 205, "", onSelectTeam);
-		btn_quick_game.loadGraphic('img/quickGameMode.png');
-		btn_quick_game.onOver.callback = quickGameHover;
-		btn_quick_game.onOut.callback = quickGameOnOut;
-		btn_tournament = new FlxButton(150, 105, "", onLoad);
-		btn_tournament.loadGraphic('img/tournamentMode.png');
-		btn_tournament.onOver.callback = tournamentHover;
-		btn_tournament.onOut.callback = tournamentOnOut;
-		add(btn_practice);
-		add(btn_quick_game);
-		add(btn_tournament);
+		btn_practice = new Button(80, 0, 'img/practiceMode.png', 'img/practiceModeHover.png', 'img/practiceModeClick.png');
+		btn_practice.btn.onUp.callback = onPractice;
+		btn_quick_game = new Button(0, 205, 'img/quickGameMode.png', 'img/quickGameModeHover.png', 'img/quickGameModeClick.png');
+		btn_quick_game.btn.onUp.callback = onSelectTeam;
+		btn_tournament = new Button(150, 105, 'img/tournamentMode.png', 'img/tournamentModeHover.png', 'img/tournamentModeClick.png');
+		btn_tournament.btn.onUp.callback = onLoad;
 		
-		var btn_practice = new FlxButton(80, 225, "Practice", onPractice);
-		var btn_quick_game = new FlxButton(init_x, 225, "Quick Game", onSelectTeam);
-		var btn_tournament = new FlxButton(400, 225, "Tournament", onLoad);
-
+		add(btn_practice.btn);
+		add(btn_quick_game.btn);
+		add(btn_tournament.btn);
 	}
 	
 	private function onSelectTeam():Void
 	{
-		trace("select team menu");
 		FlxG.switchState(new SelectTeamState());
 	}
+	
 	private function onPractice():Void
 	{
-		trace("olaa");
 		FlxG.switchState(new PracticeState());
 	}
 
 	private function onLoad():Void
 	{
 		FlxG.switchState(new TournamentState());
-	}
-	
-	private function practiceHover():Void
-	{
-		btn_practice.loadGraphic('img/practiceModeHover.png');
-	}
-	
-	private function quickGameHover():Void
-	{
-		btn_quick_game.loadGraphic('img/quickGameModeHover.png');
-	}
-	
-	private function tournamentHover():Void
-	{
-		btn_tournament.loadGraphic('img/tournamentModeHover.png');
-	}
-	
-	
-	private function practiceOnOut():Void
-	{
-		btn_practice.loadGraphic('img/practiceMode.png');
-	}
-	
-	private function quickGameOnOut():Void
-	{
-		btn_quick_game.loadGraphic('img/quickGameMode.png');
-	}
-	
-	private function tournamentOnOut():Void
-	{
-		btn_tournament.loadGraphic('img/tournamentMode.png');
-	}
-	
-	
+	}	
 }
 
 
