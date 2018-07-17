@@ -5,6 +5,7 @@ import flixel.group.FlxSpriteGroup;
 import openfl.Assets;
 import flixel.FlxG;
 import helpers.Tools;
+import helpers.SoundManager;
 
 class Team extends FlxSpriteGroup {
     var shirt:FlxSprite;
@@ -86,11 +87,13 @@ class Team extends FlxSpriteGroup {
 	}
 	
 	public function moveRight():Void{
+		SoundManager.Instance().playMove();
 		if(position != 2){
 			position++;
 		}
 	}
 	public function moveLeft():Void{
+		SoundManager.Instance().playMove();
 		if(position != 0){
 			position --;
 		}

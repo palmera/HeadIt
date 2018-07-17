@@ -4,6 +4,7 @@ import flixel.FlxGame;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import states.MenuState;
+import helpers.SoundManager;
 
 /**
  * ...
@@ -27,6 +28,7 @@ class Main extends Sprite
 		System.InitializeTeams();
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		var game = new FlxGame(0, 0, MenuState); 
+		SoundManager.Instance().playMusic();
 		//game.x = 0; 
 		//game.y = 0;
 		
