@@ -9,7 +9,8 @@
 	<app main="Main" file="HeadIt" path="bin" />
 	
 	<window background="#009100" fps="60" />
-	<window width="567" height="320" unless="mobile" />
+	<window width="900" height="508" unless="mobile" />
+	<window fullscreen="false" resizable="false" />
 	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
 	
 	<!-- classpath, haxe libs -->
