@@ -23,7 +23,7 @@ class MenuState extends FlxState
 	override function create():Void
 	{
 		super.create();
-		FlxG.scaleMode =new FixedScaleMode();
+		// FlxG.scaleMode =new FixedScaleMode();
 		
 		background = Tools.getSpriteWithSize('img/home3.png',FlxG.width,FlxG.height);
 		background.x = 0;

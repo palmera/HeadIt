@@ -34,6 +34,7 @@ class GameState extends FlxState
 	var ball:Ball;
 	var collided:Bool = false;
 	inline static var SPEED_X:Float = 200;
+	var PLAYER_Y_POS:Float = 6 * (FlxG.height / 11);
 	
 	//private var disabledCollision:Bool;
 	private var playerOpenForCollision:Bool;
@@ -56,6 +57,7 @@ class GameState extends FlxState
 		loadVariables();
 		loadAssets();
 		loadTeams();
+		loadPosts();
 		hasStarted = false;
 		ball = new Ball();
 	}
@@ -73,22 +75,46 @@ class GameState extends FlxState
 	
 	private function loadAssets(){
 		var background:FlxSprite;
+		var playerFrontGoalPosts:FlxSprite;
+		var enemyFrontGoalPosts:FlxSprite;
 		background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
 		background.x = 0;
 		background.y = 0;
 		add(background);
-
 		
+		
+		playerFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", 180, 263);
+		playerFrontGoalPosts.y = 228;
+		playerFrontGoalPosts.x = -38;
+		add(playerFrontGoalPosts);
+		
+		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -180, 263);
+		add(enemyFrontGoalPosts);
+		
+	}
+	
+	private function loadPosts()
+	{
+		var playerFrontGoalPosts:FlxSprite;
+		var enemyFrontGoalPosts:FlxSprite;
+		
+		playerFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", 180, 263);
+		playerFrontGoalPosts.y = 228;
+		playerFrontGoalPosts.x = -38;
+		add(playerFrontGoalPosts);
+		
+		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -FlxG.width, FlxG.height);
+		add(enemyFrontGoalPosts);
 	}
 	
 	private function loadTeams(){		
 		myPlayer.Flip();
 		myPlayer.x = positions[0];
-		myPlayer.y = 170;
+		myPlayer.y = PLAYER_Y_POS;
 		add(myPlayer);
 		
 		opponent.x = positions[5];
-		opponent.y = 170;
+		opponent.y = PLAYER_Y_POS;
 		add(opponent);
 	}
 	
@@ -168,7 +194,7 @@ class GameState extends FlxState
 		var currentPoint = positions[currentPosition];
 		var nextPoint = positions[nextPosition] - ballOffset;
 		
-		var a = Tools.BallisticVel(new FlxPoint(nextPoint, 170-ball.health), 60, ball);
+		var a = Tools.BallisticVel(new FlxPoint(nextPoint, PLAYER_Y_POS-ball.health), 55, ball);
 		trace('ballistic: ' + a);
 		
 		ball.velocity.y = -Math.abs(a.y);
