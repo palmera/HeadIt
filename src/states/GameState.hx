@@ -13,6 +13,7 @@ import openfl.Assets;
 import helpers.Tools;
 import gameObjects.Team;
 import flixel.FlxObject; 
+import helpers.SoundManager;
 
 
 /**
@@ -121,6 +122,7 @@ class GameState extends FlxState
 		var collidedWithOpponent = ball.x > FlxG.width / 2;
 		
 		if (collidedWithPlayer) {
+			SoundManager.Instance().playHeadBall();
 			if (playerOpenForCollision) {
 				trace('entra a player colission');
 				handleBall(aBall);
