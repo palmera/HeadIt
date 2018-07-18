@@ -10,7 +10,7 @@ import helpers.TeamList;
 import flixel.system.scaleModes.FixedScaleMode;
 import flixel.util.FlxColor;
 import helpers.Tools;
-
+import helpers.PlayMode;
 
 /**
  * ...
@@ -53,17 +53,17 @@ class SelectModeState extends FlxState
 	
 	private function onSelectTeam():Void
 	{
-		FlxG.switchState(new SelectTeamState());
+	FlxG.switchState(new SelectTeamState(PlayMode.QUICKGAME));
 	}
 	
 	private function onPractice():Void
 	{
-		FlxG.switchState(new PracticeState());
+		FlxG.switchState(new SelectTeamState(PlayMode.PRACTICE));
 	}
 
 	private function onLoad():Void
 	{
-		FlxG.switchState(new TournamentState());
+		FlxG.switchState(new SelectTeamState(PlayMode.TOURNAMENT));
 	}	
 }
 

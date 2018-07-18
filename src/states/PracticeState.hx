@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.ui.FlxButton;
 import openfl.Assets;
 import helpers.Tools;
+import gameObjects.Button;
 
 class PracticeState extends FlxState
 {
@@ -27,8 +28,9 @@ class PracticeState extends FlxState
 		background.y = 0;
 		add(background);
 		
-		var btn_back = new FlxButton(20, 20, "Back", back);
-		add(btn_back);
+		var btn_back = new Button(40, 40, 'img/Buttons/back.png', 'img/Buttons/backHover.png', 'img/Buttons/backClick.png');
+		btn_back.btn.onUp.callback = back;
+		add(btn_back.btn);
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 

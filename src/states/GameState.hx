@@ -18,7 +18,7 @@ import flixel.FlxObject;
 import helpers.SoundManager;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.addons.nape.FlxNapeSprite;
-
+import gameObjects.Button;
 
 /**
  * 
@@ -54,12 +54,9 @@ class GameState extends FlxState
 	{
 		super.create();
 		
-		
-		
-		startPrueba();
-		
-		var btn_back = new FlxButton(20, 20, "Back", back);
-		add(btn_back);
+		var btn_back = new Button(40, 40, 'img/Buttons/back.png', 'img/Buttons/backHover.png', 'img/Buttons/backClick.png');
+		btn_back.btn.onUp.callback = back;
+		add(btn_back.btn);
 	}
 	
 	function startPrueba(){
@@ -239,7 +236,7 @@ class GameState extends FlxState
 		trace("vuelta");
 		remove(myPlayer);
 		myPlayer = null;
-		FlxG.switchState(new SelectTeamState());
+		FlxG.switchState(new SelectModeState());
 	}
 	
 	

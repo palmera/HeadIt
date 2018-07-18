@@ -4,8 +4,12 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.ui.FlxButton;
+import gameObjects.Country;
 import openfl.Assets;
 import helpers.Tools;
+import gameObjects.Button;
+import gameObjects.Country;
+import gameObjects.Tournament;
 
 /**
  * ...
@@ -14,11 +18,14 @@ import helpers.Tools;
 class TournamentState  extends FlxState
 {
 	private var background:FlxSprite;
+	private var tournament:Tournament;
 	
-	public function new() 
+	public function new(country:Country)
 	{
 		super();
+		this.tournament = new Tournament(country);
 	}
+
 	
 	override function create():Void
 	{
@@ -28,8 +35,9 @@ class TournamentState  extends FlxState
 		background.y = 0;
 		add(background);
 		
-		var btn_back = new FlxButton(20, 20, "Back", back);
-		add(btn_back);
+		var btn_back = new Button(40, 40, 'img/Buttons/back.png', 'img/Buttons/backHover.png', 'img/Buttons/backClick.png');
+		btn_back.btn.onUp.callback = back;
+		add(btn_back.btn);
 
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 
