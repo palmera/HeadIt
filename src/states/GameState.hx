@@ -4,6 +4,7 @@ import flash.utils.Timer;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.nape.FlxNapeSprite;
 import flixel.math.FlxMatrix;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
@@ -15,6 +16,8 @@ import helpers.Tools;
 import gameObjects.Team;
 import flixel.FlxObject; 
 import helpers.SoundManager;
+import flixel.addons.nape.FlxNapeSpace;
+import flixel.addons.nape.FlxNapeSprite;
 
 
 /**
@@ -42,12 +45,33 @@ class GameState extends FlxState
 	//private var disabledCollision:Bool;
 	private var playerOpenForCollision:Bool;
 	private var opponentOpenForCollision:Bool;
+	
+	
+	var pruebaPelota:FlxNapeSprite;
+	var ground:Float;
 
 	override function create():Void
 	{
 		super.create();
+		
+		
+		
+		startPrueba();
+		
 		var btn_back = new FlxButton(20, 20, "Back", back);
 		add(btn_back);
+	}
+	
+	function startPrueba(){
+		FlxNapeSpace.init();
+		ground = FlxG.height - 30;
+		FlxNapeSpace.createWalls(0, 0, FlxG.width, ground);
+		
+		var newBall = new FlxNapeSprite(FlxG.width / 2,0, "img/balls/Normal.png");
+		newBall.body.userData.flxSprite = newBall;
+		add(newBall);
+		if (FlxNapeSpace.space.gravity.y != 500)
+			FlxNapeSpace.space.gravity.setxy(0, 500);
 	}
 	
 	public function new(team1:Team,team2:Team) 
