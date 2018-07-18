@@ -12,6 +12,7 @@ import flixel.addons.nape.FlxNapeSprite;
 class BallManager 
 {
 
+	public var opponentBalls:Array<Ball>;
 	
 	public var ball:Ball;
 	var positions:Array<Float>;
@@ -21,6 +22,7 @@ class BallManager
 	{
 		positions = pos;
 		game = g;
+		opponentBalls = new Array<Ball>();
 	}
 	
 	public function removeAll(){
