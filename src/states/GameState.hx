@@ -82,16 +82,7 @@ class GameState extends FlxState
 		background.x = 0;
 		background.y = 0;
 		add(background);
-		
-		
-		playerFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", 180, 263);
-		playerFrontGoalPosts.y = 228;
-		playerFrontGoalPosts.x = -38;
-		add(playerFrontGoalPosts);
-		
-		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -180, 263);
-		add(enemyFrontGoalPosts);
-		
+				
 	}
 	
 	private function loadPosts()
@@ -254,6 +245,8 @@ class GameState extends FlxState
 	private function back():Void
 	{
 		trace("vuelta");
+		remove(myPlayer);
+		myPlayer = null;
 		FlxG.switchState(new SelectTeamState());
 	}
 	

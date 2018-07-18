@@ -8,7 +8,7 @@ import helpers.Tools;
 import helpers.SoundManager;
 
 class Team extends FlxSpriteGroup {
-    var shirt:FlxSprite;
+    public var shirt:FlxSprite;
     public var head:FlxSprite;
 	var body:FlxSprite;
     var name:String;
