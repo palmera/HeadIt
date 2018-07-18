@@ -9,6 +9,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
 import flixel.ui.FlxButton;
 import gameObjects.Ball;
+import helpers.BallManager;
 import openfl.Assets;
 import helpers.Tools;
 import gameObjects.Team;
@@ -23,7 +24,7 @@ import helpers.SoundManager;
  */
 class GameState extends FlxState
 {
-	var myPlayer:Team;
+	public var myPlayer:Team;
 	var opponent:Team;
 	
 	var positions:Array<Float>;
@@ -32,10 +33,11 @@ class GameState extends FlxState
 	var maxTimerCounter:Float = 1;
 	var hasStarted:Bool;
 	
-	var ball:Ball;
+	var ballManager:BallManager;
+	//var ball:Ball;
 	var collided:Bool = false;
 	inline static var SPEED_X:Float = 200;
-	var PLAYER_Y_POS:Float = 6 * (FlxG.height / 11);
+	public var PLAYER_Y_POS:Float = 6 * (FlxG.height / 11);
 	
 	//private var disabledCollision:Bool;
 	private var playerOpenForCollision:Bool;
@@ -60,7 +62,12 @@ class GameState extends FlxState
 		loadTeams();
 		loadPosts();
 		hasStarted = false;
-		ball = new Ball();
+		ballManager = new BallManager(positions, this);
+	}
+	
+	private function startBalls(){
+		ballManager.removeAll();
+		ballManager.start();
 	}
 	
 	private function loadVariables(){
@@ -76,22 +83,10 @@ class GameState extends FlxState
 	
 	private function loadAssets(){
 		var background:FlxSprite;
-		var playerFrontGoalPosts:FlxSprite;
-		var enemyFrontGoalPosts:FlxSprite;
 		background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
 		background.x = 0;
 		background.y = 0;
 		add(background);
-		
-		
-		playerFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", 180, 263);
-		playerFrontGoalPosts.y = 228;
-		playerFrontGoalPosts.x = -38;
-		add(playerFrontGoalPosts);
-		
-		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -180, 263);
-		add(enemyFrontGoalPosts);
-		
 	}
 	
 	private function loadPosts()
@@ -129,13 +124,8 @@ class GameState extends FlxState
 		FlxG.debugger.visible = true;
 		FlxG.debugger.drawDebug = true;
 		hasStarted = true;
-		Tools.setSpriteWithSize(ball, "img/balls/Normal.png", FlxG.height * 0.12, FlxG.height * 0.12);
-		ball.x = positions[myPlayer.getCurrentPosition()]+myPlayer.getHeadOffset();
-		ball.y = 100;
-		ball.acceleration.y = System.GRAVITY;
-		ball.from = 0;
-		add(ball);
-		//disabledCollision = false;
+		startBalls();
+		
 		playerOpenForCollision = true;
 		opponentOpenForCollision = true;
 	}
@@ -151,7 +141,7 @@ class GameState extends FlxState
 			SoundManager.Instance().playHeadBall();
 			if (playerOpenForCollision) {
 				trace('entra a player colission');
-				handleBall(aBall);
+				ballManager.handleBall(aBall);
 				playerOpenForCollision = false;
 			} else {
 				var playerTimer = new haxe.Timer(400);
@@ -167,7 +157,7 @@ class GameState extends FlxState
 		if (collidedWithOpponent) {
 			if (opponentOpenForCollision) {			
 				trace('entra a opponent colission');
-				handleBall(aBall);
+				ballManager.handleBall(aBall);
 				opponentOpenForCollision = false;	
 			} else {
 				var opponentTimer = new haxe.Timer(400);
@@ -183,39 +173,7 @@ class GameState extends FlxState
 		
 	}
 	
-	function sendBallToPosition(currentPosition:Int, nextPosition:Int) 
-	{
-		var ballOffset = 0;
-		if (nextPosition < 3) {
-			ball.velocity.x = -System.SPEED_X;
-		} else {
-			ball.velocity.x = System.SPEED_X;
-			ballOffset = 20;
-		}
-		trace('sendBallToPosition nextPosition: ' + nextPosition);
-		var currentPoint = positions[currentPosition];
-		var nextPoint = positions[nextPosition] - ballOffset;
-		
-		var a = Tools.BallisticVel(new FlxPoint(nextPoint, PLAYER_Y_POS-ball.health), 55, ball);
-		trace('ballistic: ' + a);
-		
-		ball.velocity.y = -Math.abs(a.y);
-		ball.velocity.x = a.x;
-	}
-
 	
-	function calculateNextPosition(ball:Ball):Int 
-	{
-		// var ball = cast(aBall, Ball);
-		var nextPosition = -1;
-		if (ball.towardsEnemy){
-			nextPosition = FlxG.random.int(0, 2);
-		} else {
-			nextPosition = FlxG.random.int(3, 5);
-		}
-		ball.towardsEnemy = !ball.towardsEnemy;
-		return nextPosition;
-	}
 	
 	override public function update(elapsed:Float):Void
 	{
@@ -225,8 +183,9 @@ class GameState extends FlxState
 			timerCounter = 0;
 		}
 		if (hasStarted){
-			FlxG.overlap(myPlayer.head, ball, playerBallCollision);
-			FlxG.overlap(opponent.head, ball, playerBallCollision);
+			
+			FlxG.overlap(myPlayer.head, ballManager.ball, playerBallCollision);
+			FlxG.overlap(opponent.head, ballManager.ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)
@@ -243,7 +202,7 @@ class GameState extends FlxState
 		super.update(elapsed);
 	}
 	
-	function updateOpponentPosition(nextPosition:Int) 
+	public function updateOpponentPosition(nextPosition:Int) 
 	{
 		if (nextPosition >= 3){
 			trace('opponent nueva pos: ' + nextPosition);
@@ -257,22 +216,5 @@ class GameState extends FlxState
 		FlxG.switchState(new SelectTeamState());
 	}
 	
-	function handleBall(aBall:FlxObject):Void 
-	{
-		var ball = cast(aBall, Ball);
-		trace('inside');
-		ball.velocity.y = -200;
-		var nextPosition = calculateNextPosition(ball);
-		trace('nextPosition: ' + nextPosition);
-		if(ball.to == -1){
-			ball.to = nextPosition;
-		} else {
-			ball.from = ball.to;
-			ball.to = nextPosition;
-		}
-		trace('ball from: ' + ball.from);
-		trace('ball to: ' + ball.to);
-		sendBallToPosition(ball.from, ball.to);
-		updateOpponentPosition(ball.to);
-	}
+	
 }

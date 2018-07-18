@@ -27,6 +27,7 @@ class SelectTeamState extends FlxState
 	override function create():Void
 	{
 		super.create();
+		
 		this.teams = TeamList.instance;
 		var init_x:Int = Math.floor(FlxG.width / 2 - 40);
 		
