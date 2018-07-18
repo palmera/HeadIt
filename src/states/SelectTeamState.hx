@@ -77,14 +77,7 @@ class SelectTeamState extends FlxState
 		var current_country = CountryManager.Instance()._countries[current_index];
 		var countryFlag = current_country.getFlag();
 		btn_flag.loadGraphicFromSprite(countryFlag);
-		
-		
-		
-		/*var current_country = CountryManager.Instance()._countries[current_index];
-		btn_flag.loadGraphic('img/Flags/'+current_country+'Flag.png');
-		current_team = teams.get_next_team();
-		//trace(current_team.get_name());
-		current_team.get_player().update(1); //.update(1);*/
+	
 	}
 	private function previous_team():Void
 	{
@@ -110,9 +103,6 @@ class SelectTeamState extends FlxState
 		
 		var oponentTeam = new Team("Brazil");
 		FlxG.switchState(new GameState(playerTeam, oponentTeam));
-		// menuState = new MenuState();
-		// menuState.selected_team = current_team;
-		// FlxG.switchState(menuState);
 	}
 	
 	private function onCountry():Void{

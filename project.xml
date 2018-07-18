@@ -18,6 +18,9 @@
 	<haxelib name="openfl" />
 	<haxelib name="actuate" />
 	<haxelib name="flixel"/>
+	<haxelib name="flixel-addons" />
+	 <haxelib name="nape" />
+
 	
 	<!-- assets -->
 	<icon path="assets/openfl.svg" />
