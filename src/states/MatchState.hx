@@ -65,7 +65,7 @@ class MatchState extends FlxState
 	var practiceCount = 0;
 	
 	
-	public function new(team1:Team,team2:Team, mode:Int,t:Tournament) 
+	public function new(team1:Team,team2:Team, mode:Int,?t:Tournament = null) 
 	{
 		super();
 		
@@ -73,7 +73,10 @@ class MatchState extends FlxState
 		myPlayer = team1;
 		opponent = team2;
 		tournament = t;
-		level = tournament.getTournamentState();
+		if(mode == PlayMode.TOURNAMENT){
+			level = tournament.getTournamentState();
+		}
+		else level = 1;
 	}
 	
 	
@@ -82,6 +85,7 @@ class MatchState extends FlxState
 		setAssets();
 		
 		setScoreLabel();
+		
 		loadTeams();
 		
 		initPhysics();
@@ -92,6 +96,33 @@ class MatchState extends FlxState
 		loadTimes();
 	}
 	
+	private function setVariables(){
+		screenHeight = FlxG.height;
+		screenWidth = FlxG.width;
+		myScore = 0;
+		opponentScore = 0;
+		loadPoints();
+	}
+	
+	private function loadPoints(){
+		positions = [];
+		movingAmount = screenWidth / 6;
+		var offset = (screenWidth / 6 - myPlayer.getWidth()) / 2;
+		for (i in 0...6){
+			var pos = offset + i * movingAmount;
+			positions.push(pos);
+		}
+		startingPointLeft = new FlxPoint(screenWidth *-0.1, screenHeight * 0.4);
+		startingPointRight = new FlxPoint(screenWidth* 1.1, screenHeight * 0.4);
+	}
+	private function setAssets(){
+		var background:FlxSprite;
+		background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
+		background.x = 0;
+		background.y = 0;
+		add(background);
+		
+	}
 	private function initPhysics(){
 		FlxNapeSpace.init();
 		var ground = FlxG.height - 10;
@@ -124,22 +155,9 @@ class MatchState extends FlxState
 		this.add(rightLimit);
 	}
 	
-	private function setVariables(){
-		screenHeight = FlxG.height;
-		screenWidth = FlxG.width;
-		myScore = 0;
-		opponentScore = 0;
-		loadPoints();
-	}
 	
-	private function setAssets(){
-		var background:FlxSprite;
-		background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
-		background.x = 0;
-		background.y = 0;
-		add(background);
-		
-	}
+	
+	
 	
 	private function loadPosts()
 	{
@@ -157,17 +175,7 @@ class MatchState extends FlxState
 		add(enemyFrontGoalPosts);
 	}
 	
-	private function loadPoints(){
-		positions = [];
-		movingAmount = screenWidth / 6;
-		var offset = (screenWidth / 6 - myPlayer.getWidth()) / 2;
-		for (i in 0...6){
-			var pos = offset + i * movingAmount;
-			positions.push(pos);
-		}
-		startingPointLeft = new FlxPoint(screenWidth *-0.1, screenHeight * 0.4);
-		startingPointRight = new FlxPoint(screenWidth* 1.1, screenHeight * 0.4);
-	}
+	
 	
 	private function setBalls(){
 		ballManager = new BallManager(positions, this);
@@ -262,15 +270,40 @@ class MatchState extends FlxState
 		super.update(elapsed);
 	}
 	
+	function clearScreen(){
+		ballManager.stop();
+		for(i in 0...ballManager.balls.length){
+					var chosenBall = ballManager.balls[i];
+					ballManager.remove(chosenBall);
+					chosenBall = null;
+		}
+		remove(ballManager);
+		ballManager = null;
+		remove(myPlayer) ;
+		remove(opponent);
+		myPlayer = null;
+		opponent = null;
+	}
+	
 	function updateScore(){
 		ballManager.stop();
 		isUpdatingScore = true;
 		scoreLabel.text = "" + myPlayer.get_name() + " " + myScore+" - " + opponentScore+" " + opponent.get_name();
-		if(myScore == matchEndScore){
-			//***GANE***
+		if (myScore == matchEndScore){//gane
+			var switchTimer = new Timer(2000);
+			switchTimer.run = function(){
+				switchTimer.
+			}
+			clearScreen();
+			if(gameMode == PlayMode.QUICKGAME){
+				FlxG.switchState(new SelectModeState());
+			}
 		}
-		else if(opponentScore == matchEndScore){
-			//***PERDI***
+		else if(opponentScore == matchEndScore){//perdi
+			clearScreen();
+			if(gameMode == PlayMode.QUICKGAME){
+				FlxG.switchState(new SelectModeState());
+			}
 		}
 		else{
 			var delay = new Timer(2000);
@@ -304,8 +337,9 @@ class MatchState extends FlxState
 					//PERDISTE
 					var switchTimer = new Timer(2000);
 					switchTimer.run = function(){
-						FlxG.switchState(new SelectModeState());
+						clearScreen();
 						switchTimer.stop();
+						FlxG.switchState(new SelectModeState());
 					}
 					
 				}

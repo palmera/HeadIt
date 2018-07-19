@@ -107,7 +107,7 @@ if (!playerCountry.isLocked())
 		{
 		var oponentCountry = CountryManager.Instance()._countries[2];
 		if (game_mode == PlayMode.PRACTICE){
-			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.PRACTICE, new Tournament(playerCountry)));
+			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.PRACTICE));
 		}else if (game_mode == PlayMode.QUICKGAME){
 			//this.tournament = new Tournament(country);
 			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.QUICKGAME, new Tournament(playerCountry)));

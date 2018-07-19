@@ -57,7 +57,7 @@ class SelectModeState extends FlxState
 	
 	private function onSelectTeam():Void
 	{
-	FlxG.switchState(new SelectTeamState(PlayMode.QUICKGAME));
+		FlxG.switchState(new SelectTeamState(PlayMode.QUICKGAME));
 	}
 	
 	private function onPractice():Void
