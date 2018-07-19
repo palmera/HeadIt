@@ -40,13 +40,13 @@ class SelectModeState extends FlxState
 
 		add(background);
 
-		btn_practice = new Button(82, 64, 'img/practiceMode.png', 'img/practiceModeHover.png', 'img/practiceModeClick.png');
+		btn_practice = new Button(85, 100, 'img/practiceMode.png', 'img/practiceModeHover.png', 'img/practiceModeClick.png');
 		btn_practice.btn.onUp.callback = onPractice;
-		btn_quick_game = new Button(60, 370, 'img/quickGameMode.png', 'img/quickGameModeHover.png', 'img/quickGameModeClick.png');
+		btn_quick_game = new Button(20, 355, 'img/quickGameMode.png', 'img/quickGameModeHover.png', 'img/quickGameModeClick.png');
 		btn_quick_game.btn.onUp.callback = onSelectTeam;
-		btn_tournament = new Button(365, 182, 'img/tournamentMode.png', 'img/tournamentModeHover.png', 'img/tournamentModeClick.png');
+		btn_tournament = new Button(235, 180, 'img/tournamentMode.png', 'img/tournamentModeHover.png', 'img/tournamentModeClick.png');
 		btn_tournament.btn.onUp.callback = onStartTournament;
-		btn_store = new Button(395, 202, 'img/Store.png', 'img/StoreHover.png', 'img/StoreClick.png');
+		btn_store = new Button(535, 280, 'img/Store.png', 'img/StoreHover.png', 'img/StoreClick.png');
 		btn_store.btn.onUp.callback = onOpenStore;
 		
 		add(btn_practice.btn);

@@ -109,8 +109,8 @@ if (!playerCountry.isLocked())
 			
 		}else if (game_mode == PlayMode.QUICKGAME){
 			
-			
-			FlxG.switchState(new GameState(playerCountry, oponentCountry));
+			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),1));
+			//FlxG.switchState(new GameState(playerCountry, oponentCountry));
 		}else if (game_mode == PlayMode.TOURNAMENT){
 			
 			FlxG.switchState(new TournamentState(playerCountry));

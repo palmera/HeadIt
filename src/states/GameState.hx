@@ -128,7 +128,7 @@ class GameState extends FlxState
 		loadTeams();
 		loadPosts();
 		hasStarted = false;
-		ballManager = new BallManager(positions, this);
+		//ballManager = new BallManager(positions, this);
 		this.tournament = tourn;	
 					
 	}
@@ -252,8 +252,8 @@ class GameState extends FlxState
 		}
 		if (hasStarted){
 			
-			FlxG.overlap(myPlayer.head, ballManager.ball, playerBallCollision);
-			FlxG.overlap(opponent.head, ballManager.ball, playerBallCollision);
+			//FlxG.overlap(myPlayer.head, ballManager.ball, playerBallCollision);
+			//FlxG.overlap(opponent.head, ballManager.ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)
