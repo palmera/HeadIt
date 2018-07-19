@@ -13,6 +13,7 @@ import gameObjects.Team;
 import helpers.TeamList;
 import flixel.system.scaleModes.FixedScaleMode;
 import flixel.util.FlxColor;
+import flixel.text.FlxText;
 import helpers.Tools;
 using Lambda;
 
@@ -27,6 +28,8 @@ class StoreState extends FlxState
 	private var btnBuyTeam: Button;
 	private var btnBack: Button;
 	private var selectedTeamId: Int;
+	private var walletStatus:FlxText;
+	inline static var WALLET_ID:Float = 200;
 	
 	public function new() 
 	{
@@ -59,7 +62,18 @@ class StoreState extends FlxState
 	private function loadWalletDisplay():Void
 	{
 		var funds = WalletManager.Instance().getFunds();
-		
+		setWalletLabel(funds);
+	}
+	private function setWalletLabel(funds: Int){
+		var x = Math.ceil(FlxG.width / 2);
+		var y = Math.ceil(FlxG.height * 0.05);
+		walletStatus = Tools.getTextLabel(x, y, '$' + funds, 40);
+		walletStatus.ID = WALLET_ID;
+		var currentWalletLabel = this.members.filter(function (member) return member.ID == WALLET_ID ).pop();
+		if (currentWalletLabel != null) {
+			remove(currentWalletLabel);
+		}
+		add(walletStatus);
 	}
 	
 	private function loadFlags():Void
@@ -70,6 +84,7 @@ class StoreState extends FlxState
 			var y = Math.ceil(FlxG.height / 4);
 			var country = CountryManager.Instance()._countries[i];
 			var name = country.getName();
+			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30);
 			var btnC1Team ;
 			if (country.isLocked()) 
 			{
@@ -80,6 +95,7 @@ class StoreState extends FlxState
 			btnC1Team.btn.ID = i;
 			btnC1Team.btn.onUp.callback = onSelectTeam.bind(i);
 			add(btnC1Team.btn);
+			add(label);
 		}
 		for (i in 4...8) 
 		{
@@ -87,6 +103,7 @@ class StoreState extends FlxState
 			var y = Math.ceil(FlxG.height / 2);
 			var country = CountryManager.Instance()._countries[i];
 			var name = country.getName();
+			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30);
 			var btnC1Team ;
 			if (country.isLocked()) 
 			{
@@ -97,6 +114,7 @@ class StoreState extends FlxState
 			btnC1Team.btn.ID = i;
 			btnC1Team.btn.onUp.callback = onSelectTeam.bind(i);
 			add(btnC1Team.btn);
+			add(label);
 		}
 	}
 	
@@ -111,6 +129,7 @@ class StoreState extends FlxState
 				var flags = this.members.filter(isFlagButton);
 				flags.iter(function(flag) remove(flag));
 				loadFlags();
+				loadWalletDisplay();
 			}
 		}
 	}
