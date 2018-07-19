@@ -107,13 +107,10 @@ if (!playerCountry.isLocked())
 		{
 		var oponentCountry = CountryManager.Instance()._countries[2];
 		if (game_mode == PlayMode.PRACTICE){
-			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.PRACTICE));
+			FlxG.switchState(new MatchState(playerCountry, oponentCountry,PlayMode.PRACTICE));
 		}else if (game_mode == PlayMode.QUICKGAME){
-			//this.tournament = new Tournament(country);
-			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.QUICKGAME, new Tournament(playerCountry)));
-			//FlxG.switchState(new GameState(playerCountry, oponentCountry));
+			FlxG.switchState(new MatchState(playerCountry, oponentCountry,PlayMode.QUICKGAME));
 		}else if (game_mode == PlayMode.TOURNAMENT){
-			
 			FlxG.switchState(new TournamentState(playerCountry));
 		}
 }

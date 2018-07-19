@@ -2,6 +2,7 @@ package states;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import gameObjects.Ball;
+import gameObjects.Country;
 import gameObjects.Team;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -20,6 +21,7 @@ import flixel.FlxObject;
 import helpers.PlayMode;
 import gameObjects.Tournament;
 import Random;
+import helpers.TournamentStages;
 //import helpers.PlayMode;
 /**
  * ...
@@ -29,6 +31,8 @@ class MatchState extends FlxState
 {
 	public var myPlayer:Team;
 	var opponent:Team;
+	var country1:Country;
+	var country2:Country;
 	
 	var screenWidth:Float;
 	var screenHeight:Float;
@@ -65,13 +69,14 @@ class MatchState extends FlxState
 	var practiceCount = 0;
 	
 	
-	public function new(team1:Team,team2:Team, mode:Int,?t:Tournament = null) 
+	public function new(country1:Country, country2:Country , mode:Int, ?t:Tournament = null) 
 	{
 		super();
-		
+		this.country1 = country1;
+		this.country2 = country2;
 		gameMode = mode;
-		myPlayer = team1;
-		opponent = team2;
+		myPlayer = country1.getTeam();
+		opponent = country2.getTeam();
 		tournament = t;
 		if(mode == PlayMode.TOURNAMENT){
 			level = tournament.getTournamentState();
@@ -283,6 +288,8 @@ class MatchState extends FlxState
 		remove(opponent);
 		myPlayer = null;
 		opponent = null;
+		country1 = null;
+		country2 = null;
 	}
 	
 	function updateScore(){
@@ -292,18 +299,77 @@ class MatchState extends FlxState
 		if (myScore == matchEndScore){//gane
 			var switchTimer = new Timer(2000);
 			switchTimer.run = function(){
-				switchTimer.
+				switchTimer.stop();
+				
+				if (gameMode == PlayMode.QUICKGAME){
+					clearScreen();
+					FlxG.switchState(new SelectModeState());
+				}
+				else {
+					if (this.tournament.getTournamentState() != TournamentStages.Final){
+						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+						if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
+							this.tournament.pushToSemifinalists(this.tournament.getPlayerCountry());
+							clearScreen();
+							FlxG.switchState(new TournamentState(this.tournament));
+						}
+						if (this.tournament.getTournamentState() == TournamentStages.Final){
+							this.tournament.pushToFinalists(this.tournament.getPlayerCountry());
+							clearScreen();
+							FlxG.switchState(new TournamentState(this.tournament));
+						}
+					}else{
+						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+						this.tournament.setChampion(tournament.getPlayerCountry());
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+				}
 			}
-			clearScreen();
-			if(gameMode == PlayMode.QUICKGAME){
-				FlxG.switchState(new SelectModeState());
-			}
+			
 		}
-		else if(opponentScore == matchEndScore){//perdi
-			clearScreen();
-			if(gameMode == PlayMode.QUICKGAME){
-				FlxG.switchState(new SelectModeState());
+		else if (opponentScore == matchEndScore){//perdi
+			var switchTimer = new Timer(2000);
+			switchTimer.run = function(){
+				switchTimer.stop();
+				
+				if (gameMode == PlayMode.QUICKGAME){
+					clearScreen();
+					FlxG.switchState(new SelectModeState());
+				}
+				else {
+					if (this.tournament.getTournamentState() == TournamentStages.RoundOfFour){
+						tournament.pushToSemifinalists(this.country2);
+						var semifinalistCountries = this.tournament.getSemifinalistCountries().copy();
+						var c = Random.fromArray([semifinalistCountries[0], semifinalistCountries[1]]);
+						tournament.simulateMatchesSemifinals();
+						tournament.pushToFinalists(c);
+						var finalistCountries = this.tournament.getFinalistCountries().copy();
+						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
+						this.tournament.setChampion(c2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					
+					}
+					else if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
+						tournament.pushToFinalists(this.country2);
+						var finalistCountries = this.tournament.getFinalistCountries().copy();
+						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
+						this.tournament.setChampion(c2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+					else{
+						this.tournament.setChampion(this.country2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+				}
 			}
+			
 		}
 		else{
 			var delay = new Timer(2000);

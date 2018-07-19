@@ -10,6 +10,7 @@ import helpers.Tools;
 import gameObjects.Button;
 import gameObjects.Country;
 import gameObjects.Tournament;
+import helpers.PlayMode;
 import helpers.TournamentStages;
 
 /**
@@ -374,14 +375,14 @@ class TournamentState  extends FlxState
 		if (this.tournament.getTournamentState() == TournamentStages.RoundOfFour){
 			var countries:Array<Country> = tournament.getParticipatingCountries();
 			tournament.simulateMatchesRoundOfFour();
-			FlxG.switchState(new GameState(countries[0], countries[1], this.tournament));
+			FlxG.switchState(new MatchState(countries[0], countries[1],PlayMode.TOURNAMENT, this.tournament));
 		}else if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
 			var countries:Array<Country> = tournament.getSemifinalistCountries();
 			tournament.simulateMatchesSemifinals();
-			FlxG.switchState(new GameState(countries[0], countries[1], this.tournament));
+			FlxG.switchState(new MatchState(countries[0], countries[1],PlayMode.TOURNAMENT, this.tournament));
 		}else if (this.tournament.getTournamentState() == TournamentStages.Final){
 			var countries:Array<Country> = tournament.getFinalistCountries();
-			FlxG.switchState(new GameState(countries[0], countries[1], this.tournament));
+			FlxG.switchState(new MatchState(countries[0], countries[1],PlayMode.TOURNAMENT, this.tournament));
 		}
 	}
 	
