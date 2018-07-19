@@ -1,12 +1,16 @@
 package states;
 import flixel.FlxState;
 import flixel.text.FlxText;
+import gameObjects.Ball;
 import gameObjects.Team;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import helpers.Tools;
 import flixel.FlxSprite;
+import flixel.addons.nape.FlxNapeSpace;
 import helpers.BallManager;
+import helpers.Balls;
+import flixel.addons.nape.FlxNapeSprite;
 //import helpers.PlayMode;
 /**
  * ...
@@ -34,7 +38,7 @@ class MatchState extends FlxState
 	var ballManager:BallManager;
 	
 	
-	public var PLAYER_Y_POS:Float = 6 * (FlxG.height / 11);
+	public var PLAYER_Y_POS:Float = 255;
 	
 	private function setVariables(){
 		screenHeight = FlxG.height;
@@ -50,7 +54,7 @@ class MatchState extends FlxState
 		background.x = 0;
 		background.y = 0;
 		add(background);
-		loadPosts();
+		
 	}
 	
 	private function loadPosts()
@@ -64,7 +68,8 @@ class MatchState extends FlxState
 		add(playerFrontGoalPosts);
 		
 		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -180, 263);
-		//TODO: x e y
+		enemyFrontGoalPosts.y = 228;
+		enemyFrontGoalPosts.x = 762;
 		add(enemyFrontGoalPosts);
 	}
 	
@@ -89,9 +94,10 @@ class MatchState extends FlxState
 			scoreLabel = new FlxText(screenWidth / 2, screenHeight * 0.05,0,""+myScore,16);
 		}
 		else{*/
-			scoreLabel = new FlxText(screenWidth / 2, screenHeight * 0.05,0,myPlayer.get_name()+" "+myScore+" - "+opponentScore+" "+opponent.get_name(),60);
+			scoreLabel = new FlxText(0, screenHeight * 0.05,screenWidth,myPlayer.get_name()+" "+myScore+" - "+opponentScore+" "+opponent.get_name());
 		//}
-		scoreLabel.setFormat("fonts/Supersonic-Rocketship.ttf");
+		scoreLabel.setFormat("fonts/Supersonic-Rocketship.ttf", 40);
+		scoreLabel.alignment = "center";
 		add(scoreLabel);
 	}
 	
@@ -101,26 +107,45 @@ class MatchState extends FlxState
 		myPlayer.Flip();
 		myPlayer.x = positions[0];
 		myPlayer.y = PLAYER_Y_POS;
+		
 		add(myPlayer);
 		
 		opponent.x = positions[5];
 		opponent.y = PLAYER_Y_POS;
 		add(opponent);
+		loadPosts();
 	}
-	
+	override public function create():Void{
+		setVariables();
+		setAssets();
+		
+		setScoreLabel();
+		loadTeams();
+		
+		FlxNapeSpace.init();
+		var ground = FlxG.height - 30;
+		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground);
+		FlxNapeSpace.createWalls(0, 0, 30, ground);
+
+		
+		
+		if (FlxNapeSpace.space.gravity.y != 800)
+			FlxNapeSpace.space.gravity.setxy(0, 800);
+			
+		FlxNapeSpace.drawDebug = true;
+		setBalls();
+		
+	}
 	
 	public function new(team1:Team,team2:Team, mode:Int) 
 	{
 		super();
+		
+		gameMode = mode;
 		myPlayer = team1;
 		opponent = team2;
 		
-		setVariables();
-		setAssets();
-		setBalls();
-		gameMode = mode;
-		setScoreLabel();
-		loadTeams();
+		
 		
 		
 		
@@ -134,40 +159,12 @@ class MatchState extends FlxState
             [self schedule:@selector(decreaseTime) interval:1];
     
     
-    
-    
-    
-   
-    player.position=ccp(point1.x,0.20f*screenHeight);
-    opponent.position=ccp(point6.x,0.20f*screenHeight);
-    //player.scale=0.4;
-    opponent.scale=0.4;
-    //player.physicsHead.scale=0.4;
-    player.head.opacity=0;
-    player.scaleX=-0.4;
-    player.scaleY=0.4;
-    player.physicsHead.scaleY=0.4;
-    player.physicsHead.scaleX=-0.4;
-    opponent.head.opacity=0;
-    player.physicsHead.position=ccp(point1.x+0.012f*screenWidth,0.427f*screenHeight);
-    opponent.physicsHead.position=ccp(point6.x-0.012f*screenWidth,0.427f*screenHeight);
-    player.yBodyPos=player.position.y;
-    player.yHeadPos=player.physicsHead.position.y;
-    opponent.yBodyPos=opponent.position.y;
-    opponent.yHeadPos=opponent.physicsHead.position.y;
-    player.physicsHead.physicsBody.type = CCPhysicsBodyTypeStatic;
-    player.physicsHead.physicsBody.collisionType=@"headCollision";
-    opponent.physicsHead.physicsBody.type = CCPhysicsBodyTypeStatic;
-    opponent.physicsHead.physicsBody.collisionType=@"headCollision";
-    opponent.physicsHead.scale=0.4;
-    //[self addChild:player];
-    //[self addChild:opponent];
-    
-    allBalls =[[NSMutableArray alloc]init];
 
-    [self addChild:player z:2];
-    [self addChild:opponent z:2];
-    //Cada 6 segundos ejecuta el metodo addBall
+    player.physicsHead.physicsBody.collisionType=@"headCollision";
+    opponent.physicsHead.physicsBody.collisionType=@"headCollision";
+   
+
+   
     [self schedule:@selector(addBall) interval:8];
     //timer = [NSTimer scheduledTimerWithTimeInterval:8 target:self selector:@selector(addBall) userInfo:nil repeats:YES];
     

@@ -207,9 +207,11 @@ class GameState extends FlxState
 			timerCounter = 0;
 		}
 		if (hasStarted){
+			for(ball in ballManager.balls){
+				FlxG.overlap(myPlayer.head, ball, playerBallCollision);
+				FlxG.overlap(opponent.head, ball, playerBallCollision);
+			}
 			
-			FlxG.overlap(myPlayer.head, ballManager.ball, playerBallCollision);
-			FlxG.overlap(opponent.head, ballManager.ball, playerBallCollision);
 		}
 		
    		if (FlxG.keys.justPressed.LEFT)

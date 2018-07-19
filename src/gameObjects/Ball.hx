@@ -7,16 +7,17 @@ import helpers.Tools;
  * ...
  * @author Alejandro Grunwaldt
  */
-class Ball extends FlxSprite
+class Ball extends FlxNapeSprite
 {
 	public var towardsEnemy = false;
 	public var from = -1;
 	public var to = -1;
-	public function new() 
-	{
-		super();
-		Tools.setSpriteWithSize(this, "img/balls/Normal.png", FlxG.height * 0.12, FlxG.height * 0.12);
+	
 
+	public function new(type:String, x:Float,y:Float) 
+	{
+		super(x,y,"img/balls/" + type);
+		this.createCircularBody(30);
 	}
 	
 }
