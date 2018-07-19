@@ -10,7 +10,10 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxVector;
 import flixel.ui.FlxButton;
 import gameObjects.Ball;
+import gameObjects.Country;
+import gameObjects.Tournament;
 import helpers.BallManager;
+import helpers.TournamentStages;
 import openfl.Assets;
 import helpers.Tools;
 import gameObjects.Team;
@@ -27,9 +30,12 @@ import gameObjects.Button;
  */
 class GameState extends FlxState
 {
+	public var country1:Country;
+	public var country2:Country;
+	
 	public var myPlayer:Team;
 	var opponent:Team;
-	
+	var tournament:Tournament;
 	var positions:Array<Float>;
 	
 	var timerCounter:Float = 0;
@@ -57,6 +63,40 @@ class GameState extends FlxState
 		var btn_back = new Button(40, 40, 'img/Buttons/back.png', 'img/Buttons/backHover.png', 'img/Buttons/backClick.png');
 		btn_back.btn.onUp.callback = back;
 		add(btn_back.btn);
+		
+		// GANO SIEMPRE
+		/*if (this.tournament.getTournamentState() != TournamentStages.Final){
+			this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+			if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
+				this.tournament.pushToSemifinalists(this.tournament.getPlayerCountry());
+				FlxG.switchState(new TournamentState(this.tournament));
+			}
+			if (this.tournament.getTournamentState() == TournamentStages.Final){
+				this.tournament.pushToFinalists(this.tournament.getPlayerCountry());
+				FlxG.switchState(new TournamentState(this.tournament));
+			}
+		}else{
+			//ES LA FINAL Y GANO
+			this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+			this.tournament.setChampion(tournament.getPlayerCountry());
+			FlxG.switchState(new TournamentState(this.tournament));
+		}*/
+		
+		// PIERDO 
+		if (this.tournament.getTournamentState() == TournamentStages.RoundOfFour){
+			tournament.simulateMatchesRoundOfFour();
+			tournament.pushToSemifinalists(this.country2);
+			var semifinalistCountries = this.tournament.getSemifinalistCountries().copy();
+			var c = Random.fromArray([semifinalistCountries[0], semifinalistCountries[1]]);
+			tournament.simulateMatchesSemifinals();
+			tournament.pushToFinalists(c);
+			var finalistCountries = this.tournament.getFinalistCountries().copy();
+			var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
+			this.tournament.setChampion(c2);
+			this.tournament.setTournamentState(TournamentStages.EndedLoose);
+			FlxG.switchState(new TournamentState(this.tournament));
+		
+		}
 	}
 	
 	function startPrueba(){
@@ -69,14 +109,19 @@ class GameState extends FlxState
 		add(newBall);
 		if (FlxNapeSpace.space.gravity.y != 500)
 			FlxNapeSpace.space.gravity.setxy(0, 500);
+			
+			
+		
 	}
 	
-	public function new(team1:Team,team2:Team) 
+	public function new(c1:Country,c2:Country, ?tourn: Tournament) 
 	{
 		super();
-		myPlayer = team1;
+		country1 = c1;
+		country2 = c2;
+		myPlayer = c1.getTeam();
 		myPlayer.isEnemy = false;
-		opponent = team2;
+		opponent = c2.getTeam();
 		opponent.isEnemy = true;
 		loadVariables();
 		loadAssets();
@@ -84,6 +129,8 @@ class GameState extends FlxState
 		loadPosts();
 		hasStarted = false;
 		ballManager = new BallManager(positions, this);
+		this.tournament = tourn;	
+					
 	}
 	
 	private function startBalls(){

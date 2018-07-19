@@ -104,9 +104,9 @@ class SelectTeamState extends FlxState
 		if (game_mode == PlayMode.PRACTICE){
 			
 		}else if (game_mode == PlayMode.QUICKGAME){
-			var playerTeam = CountryManager.Instance()._countries[current_index].getTeam();
-			var oponentTeam = new Team("Brazil");
-			FlxG.switchState(new GameState(playerTeam, oponentTeam));
+			var playerCountry = CountryManager.Instance()._countries[current_index];
+			var oponentCountry = CountryManager.Instance()._countries[2];
+			FlxG.switchState(new GameState(playerCountry, oponentCountry));
 		}else if (game_mode == PlayMode.TOURNAMENT){
 			var playerCountry = CountryManager.Instance()._countries[current_index];
 			FlxG.switchState(new TournamentState(playerCountry));

@@ -34,4 +34,7 @@ class Country
 		return team;
 	}
 	
+	public function getDifficulty():Int{
+		return difficulty;
+	}
 }
