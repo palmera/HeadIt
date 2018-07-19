@@ -5,6 +5,7 @@ import gameObjects.Ball;
 import gameObjects.Team;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
+import haxe.Timer;
 import helpers.Tools;
 import flixel.FlxSprite;
 import flixel.addons.nape.FlxNapeSpace;
@@ -75,6 +76,7 @@ class MatchState extends FlxState
 		level = tournament.getTournamentState();
 	}
 	
+	
 	override public function create():Void{
 		setVariables();
 		setAssets();
@@ -105,7 +107,7 @@ class MatchState extends FlxState
 		
 		floor = Tools.getSpriteWithSize("img/players/UruguayHead.png", FlxG.width, 10);
 		floor.x = 0;
-		floor.y = ground-1;
+		floor.y = ground-20;
 		floor.set_visible(false);
 		this.add(floor);
 		
@@ -237,19 +239,7 @@ class MatchState extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
-		/*timerCounter += elapsed;
-		if (timerCounter > maxTimerCounter && !hasStarted){
-			startGame();
-			timerCounter = 0;
-		}
-		if (hasStarted){
-			for(ball in ballManager.balls){
-				FlxG.overlap(myPlayer.head, ball, playerBallCollision);
-				FlxG.overlap(opponent.head, ball, playerBallCollision);
-			}
-			
-		}*/
-		
+
 		for(ball in ballManager.balls){
 				FlxG.overlap(myPlayer.collisionHead, ball, playerBallCollision);
 				FlxG.overlap(opponent.collisionHead, ball, playerBallCollision);
@@ -272,11 +262,63 @@ class MatchState extends FlxState
 		super.update(elapsed);
 	}
 	
+	function updateScore(){
+		ballManager.stop();
+		isUpdatingScore = true;
+		scoreLabel.text = "" + myPlayer.get_name() + " " + myScore+" - " + opponentScore+" " + opponent.get_name();
+		if(myScore == matchEndScore){
+			//***GANE***
+		}
+		else if(opponentScore == matchEndScore){
+			//***PERDI***
+		}
+		else{
+			var delay = new Timer(2000);
+			delay.run = function(){
+				delay.stop();
+				isUpdatingScore = false;
+				myPlayer.position = 0;
+				opponent.position = 5;
+				myPlayer.x = positions[0];
+				opponent.x = positions[5];
+				for(i in 0...ballManager.balls.length){
+					var chosenBall = ballManager.balls[i];
+					ballManager.remove(chosenBall);
+				}
+				ballManager.opponentBalls.splice(0, ballManager.opponentBalls.length);
+				ballManager.balls.splice(0, ballManager.balls.length);
+				ballManager.start();
+
+			}
+		}
+
+	}
 	
 	function ballFloorCollision(aFloor:FlxObject, aBall:FlxObject):Void
 	{
 		var ball = cast(aBall, Ball);
-		trace("piso");
+		if (!isUpdatingScore){
+			isUpdatingScore = true;
+			if(ball.count % 2 == 0){
+				if(gameMode == PlayMode.PRACTICE){
+					//PERDISTE
+					var switchTimer = new Timer(2000);
+					switchTimer.run = function(){
+						FlxG.switchState(new SelectModeState());
+						switchTimer.stop();
+					}
+					
+				}
+				else{
+					opponentScore++;
+					this.updateScore();
+				}
+			}
+			else{
+				myScore++;
+				this.updateScore();
+			}
+		}
 		
 	}
 function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
@@ -298,11 +340,6 @@ function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
 				}
 			}
 			
-			/*if (collidedWithPlayer) {
-			//SoundManager.Instance().playHeadBall();
-			//trace("col");
-			
-			} */
 		}
 		
 

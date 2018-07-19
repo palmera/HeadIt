@@ -53,6 +53,10 @@ class BallManager extends FlxGroup
 
 	}
 	
+	public function stop(){
+		newBallTimer.stop();
+	}
+	
 	public function start(){
 		
 		addBall();
