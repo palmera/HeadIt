@@ -3,6 +3,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.ui.FlxButton;
+import gameObjects.Tournament;
 import helpers.PlayMode;
 import openfl.Assets;
 import gameObjects.Team;
@@ -108,8 +109,8 @@ if (!playerCountry.isLocked())
 		if (game_mode == PlayMode.PRACTICE){
 			
 		}else if (game_mode == PlayMode.QUICKGAME){
-			
-			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),1));
+			//this.tournament = new Tournament(country);
+			FlxG.switchState(new MatchState(playerCountry.getTeam(), oponentCountry.getTeam(),PlayMode.QUICKGAME, new Tournament(playerCountry)));
 			//FlxG.switchState(new GameState(playerCountry, oponentCountry));
 		}else if (game_mode == PlayMode.TOURNAMENT){
 			

@@ -9,6 +9,7 @@ import flixel.addons.nape.FlxNapeSprite;
 import states.MatchState;
 import haxe.Timer;
 import nape.dynamics.InteractionGroup;
+import Date;
 /**
  * ...
  * @author ...
@@ -18,10 +19,13 @@ class BallManager extends FlxGroup
 
 	
 	public var balls:Array<Ball>;
+	public var opponentBalls:Array<Ball>;
 	var positions:Array<Float>;
 	var match:MatchState;
 	var newBallTimer:Timer;
 	var group:InteractionGroup;
+	var addBallTime:Date;
+	
 	public function new(pos:Array<Float>, g:MatchState) 
 	{
 		super();
@@ -29,6 +33,7 @@ class BallManager extends FlxGroup
 		positions = pos;
 		match = g;
 		balls = new Array<Ball>();
+		opponentBalls = new Array<Ball>();
 		start();
 	}
 	
@@ -38,32 +43,14 @@ class BallManager extends FlxGroup
 	
 	public function addBall(){
 		trace("add ball");
-		//var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.4);
-		//newBall.velocity.x = -System.SPEED_X;
-		//newBall.velocity.y = FlxG.height * 52 / 32;
-		//newBall.x = positions[0]+match.myPlayer.getHeadOffset();
-		//newBall.y = 0;
+
 		var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.5,group);
 		newBall.body.velocity.x = FlxG.width*-45/56;
 		newBall.body.velocity.y = FlxG.height * 2;
 		this.add(newBall);
 		balls.push(newBall);
+		addBallTime = Date.now();
 
-		//var newBall = new 
-	/*
-	 * Ball* ballToAdd = [Ball createWithName:ballName];
-    ballToAdd.position=ccp(1.1f*screenWidth,0.4f*screenHeight);
-    ballToAdd.physicsBody.velocity=ccp((-450.0f/568.0f)*screenWidth,(520.0f/320.0f)*screenHeight);
-    [self.physicsWorld addChild:ballToAdd z:2];
-    [allBalls addObject:ballToAdd];
-    addBallTime=[NSDate date];
-    // ballToAdd.scale=0.8;
-	
-	
-
-		
-		add(newBall);
-	 * */	
 	}
 	
 	public function start(){
@@ -74,19 +61,14 @@ class BallManager extends FlxGroup
 		{
 			addBall();
 		};
-		/*ball = new Ball();
-		ball.x = positions[0]+match.myPlayer.getHeadOffset();
-		ball.y = 100;
-		ball.acceleration.y = System.GRAVITY;
-		ball.from = 0;
-		match.add(ball);*/
+		
 	}
 	
 	public function handleBall(aBall:FlxObject):Void 
 	{
 		var ball = cast(aBall, Ball);
 		trace('inside');
-		ball.velocity.y = -200;
+		/*ball.velocity.y = -200;
 		var nextPosition = calculateNextPosition(ball);
 		trace('nextPosition: ' + nextPosition);
 		if(ball.to == -1){
@@ -98,7 +80,7 @@ class BallManager extends FlxGroup
 		trace('ball from: ' + ball.from);
 		trace('ball to: ' + ball.to);
 		sendBallToPosition(ball,ball.from, ball.to);
-		match.updateOpponentPosition(ball.to);
+		match.updateOpponentPosition(ball.to);*/
 	}
 	
 	function sendBallToPosition(aBall:Ball, currentPosition:Int, nextPosition:Int) 

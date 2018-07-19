@@ -6,6 +6,9 @@ import openfl.Assets;
 import flixel.FlxG;
 import helpers.Tools;
 import helpers.SoundManager;
+import gameObjects.Ball;
+import haxe.Timer;
+import flixel.math.FlxPoint;
 
 class Team extends FlxSpriteGroup {
     public var shirt:FlxSprite;
@@ -19,6 +22,7 @@ class Team extends FlxSpriteGroup {
 	
 	var playerHeight:Float;
 	var playerWidth:Float;
+	var positions :Array<Float>;
 
     public function new(name:String) {
 		super();
@@ -31,6 +35,12 @@ class Team extends FlxSpriteGroup {
 		setBody();
 		setShirt();
     }
+	
+	public function setPositions(p:Array<Float>){
+		positions = p;
+	}
+	
+	
 
 	
 	private function setHead():Void{
@@ -90,6 +100,40 @@ class Team extends FlxSpriteGroup {
 		SoundManager.Instance().playMove();
 		if(position != 0){
 			position --;
+		}
+	}
+	
+	private function opponentNextPosition(aBall:Ball):Float{
+		return positions[aBall.finalPosition];
+	}
+	
+	public function moveOpponent(aBall:Ball){
+		var currentDate:Date = Date.now();
+		var timeDifference = aBall.totalTime;
+		if (aBall.finalPosition != this.position){
+			var nextPos = opponentNextPosition(aBall);
+			if(aBall.finalPosition - this.position == -1 || aBall.finalPosition - this.position == 1 ){
+				var delay = new Timer(Std.int(timeDifference * 1000 / 2));
+				delay.run = function(){
+					this.x = nextPos;
+					this.position = aBall.finalPosition;
+					delay.stop();
+				}
+			}
+			else{
+				var delay = new Timer(Std.int(timeDifference * 1000 / 4));
+				delay.run = function(){
+					this.x = positions[4];
+					delay.stop();
+					var move = new Timer(Std.int(timeDifference * 1000 / 4));
+					move.run = function(){
+						this.x = nextPos;
+						this.position = aBall.finalPosition;
+						move.stop();
+					}
+				}
+				
+			}
 		}
 	}
 	
