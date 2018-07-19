@@ -7,12 +7,13 @@ import gameObjects.Ball;
 import openfl.Assets;
 import openfl.geom.Point;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 
  class Tools 
 {
-	 public static function getTextLabel(x:Int, y:Int, text: String, size:Int){
+	 public static function getTextLabel(x:Int, y:Int, text: String, size:Int, color:FlxColor = FlxColor.WHITE){
 		var textLabel = new FlxText(x, y, 0, text);
-		textLabel.setFormat("fonts/Supersonic-Rocketship.ttf", size);
+		textLabel.setFormat("fonts/Supersonic-Rocketship.ttf", size, color);
 		return textLabel;
 	}
 	 public static function getSpriteWithSize(path:String, width:Float, height:Float):FlxSprite{
