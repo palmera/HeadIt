@@ -47,7 +47,7 @@ class StoreState extends FlxState
 
 		add(background);
 
-		btnBuyTeam = new Button(700, 64, 'img/Buttons/next.png', 'img/Buttons/nextHover.png', 'img/Buttons/nextClick.png');
+		btnBuyTeam = new Button(700, 64, 'img/Buttons/buy.png', 'img/Buttons/buyHover.png', 'img/Buttons/buyClick.png');
 		btnBuyTeam.btn.onUp.callback = onBuy;
 		add(btnBuyTeam.btn);
 		
@@ -65,9 +65,9 @@ class StoreState extends FlxState
 		setWalletLabel(funds);
 	}
 	private function setWalletLabel(funds: Int){
-		var x = Math.ceil(FlxG.width / 2);
+		var x = Math.ceil(FlxG.width / 2) - 40;
 		var y = Math.ceil(FlxG.height * 0.05);
-		walletStatus = Tools.getTextLabel(x, y, '$' + funds, 40);
+		walletStatus = Tools.getTextLabel(x, y, '$' + funds, 40, FlxColor.ORANGE);
 		walletStatus.ID = WALLET_ID;
 		var currentWalletLabel = this.members.filter(function (member) return member.ID == WALLET_ID ).pop();
 		if (currentWalletLabel != null) {
@@ -81,16 +81,21 @@ class StoreState extends FlxState
 		for (i in 0...4) 
 		{
 			var x = Math.ceil((FlxG.width / 5) * (i)) + 90;
-			var y = Math.ceil(FlxG.height / 4);
+			var y = Math.ceil(FlxG.height / 4) + 30;
 			var country = CountryManager.Instance()._countries[i];
 			var name = country.getName();
-			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30);
+			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30, FlxColor.ORANGE);
 			var btnC1Team ;
 			if (country.isLocked()) 
 			{
-				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlag.png');
+				if (this.selectedTeamId == i) 
+				{
+					btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlagClick.png', 'img/Flags/' + name + 'LockedFlagClick.png', 'img/Flags/' + name + 'LockedFlagClick.png');
+				} else {
+					btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlagHover.png', 'img/Flags/' + name + 'LockedFlagClick.png');
+				}
 			} else {
-				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'Flag.png');
+				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'FlagClick.png', 'img/Flags/' + name + 'FlagHover.png');
 			}
 			btnC1Team.btn.ID = i;
 			btnC1Team.btn.onUp.callback = onSelectTeam.bind(i);
@@ -100,16 +105,21 @@ class StoreState extends FlxState
 		for (i in 4...8) 
 		{
 			var x = Math.ceil((FlxG.width / 5) * ((i % 4))) + 90;
-			var y = Math.ceil(FlxG.height / 2);
+			var y = Math.ceil(FlxG.height / 2) + 40;
 			var country = CountryManager.Instance()._countries[i];
 			var name = country.getName();
-			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30);
+			var label = Tools.getTextLabel(x + 10, y + 100, '$' + country.getCost(), 30, FlxColor.ORANGE);
 			var btnC1Team ;
 			if (country.isLocked()) 
 			{
-				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlag.png');
+				if (this.selectedTeamId == i) 
+				{
+					btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlagClick.png', 'img/Flags/' + name + 'LockedFlagClick.png', 'img/Flags/' + name + 'LockedFlagClick.png');
+				} else {
+					btnC1Team = new Button(x, y, 'img/Flags/' + name + 'LockedFlag.png', 'img/Flags/' + name + 'LockedFlagHover.png', 'img/Flags/' + name + 'LockedFlagClick.png');
+				}
 			} else {
-				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'Flag.png');
+				btnC1Team = new Button(x, y, 'img/Flags/' + name + 'Flag.png', 'img/Flags/' + name + 'FlagClick.png', 'img/Flags/' + name + 'FlagHover.png');
 			}
 			btnC1Team.btn.ID = i;
 			btnC1Team.btn.onUp.callback = onSelectTeam.bind(i);
@@ -118,6 +128,11 @@ class StoreState extends FlxState
 		}
 	}
 	
+	private function removeFlags()
+	{
+		var flags = this.members.filter(isFlagButton);
+		flags.iter(function(flag) remove(flag));
+	}
 	private function onBuy():Void
 	{
 		try 
@@ -126,8 +141,7 @@ class StoreState extends FlxState
 			if (selectedCountry.isLocked()) 
 			{
 				StoreManager.Instance().purchase(selectedCountry);
-				var flags = this.members.filter(isFlagButton);
-				flags.iter(function(flag) remove(flag));
+				removeFlags();
 				loadFlags();
 				loadWalletDisplay();
 			}
@@ -140,6 +154,8 @@ class StoreState extends FlxState
 	private function onSelectTeam(id: Int):Void
 	{
 		this.selectedTeamId = id;
+		removeFlags();
+		loadFlags();
 	}
 
 	private function onBack():Void
