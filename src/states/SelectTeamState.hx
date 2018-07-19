@@ -99,11 +99,16 @@ class SelectTeamState extends FlxState
 	
 	private function play():Void
 	{
-		var playerTeam = CountryManager.Instance()._countries[current_index].getTeam();
+		var playerCountry = CountryManager.Instance()._countries[current_index];
+		var playerTeam = playerCountry.getTeam();
 		
 		var opponentTeam = new Team("Brazil");
-		FlxG.switchState(new GameState(playerTeam, oponentTeam));
-		//FlxG.switchState(new MatchState(playerTeam, opponentTeam,1));
+		
+		if (!playerCountry.isLocked()) 
+		{
+			FlxG.switchState(new GameState(playerTeam, opponentTeam));
+			//FlxG.switchState(new MatchState(playerTeam, opponentTeam,1));
+		}
 	}
 	
 	private function onCountry():Void{
