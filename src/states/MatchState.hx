@@ -126,7 +126,7 @@ class MatchState extends FlxState
 		var ground = FlxG.height - 30;
 		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground);
 		FlxNapeSpace.createWalls(0, 0, 30, ground);
-
+		FlxNapeSpace.createWalls(FlxG.width-30, ground/2, FlxG.width, ground);
 		
 		
 		if (FlxNapeSpace.space.gravity.y != 800)

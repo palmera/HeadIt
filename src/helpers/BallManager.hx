@@ -38,9 +38,9 @@ class BallManager
 		//newBall.velocity.y = FlxG.height * 52 / 32;
 		//newBall.x = positions[0]+match.myPlayer.getHeadOffset();
 		//newBall.y = 0;
-		var newBall = new Ball(Balls.NORMAL, positions[2], 100);
+		var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.4);
 		newBall.body.velocity.x = -System.SPEED_X;
-		newBall.body.velocity.y = 20;
+		newBall.body.velocity.y = FlxG.height * 52 / 32;
 		this.match.add(newBall);
 		balls.push(newBall);
 
