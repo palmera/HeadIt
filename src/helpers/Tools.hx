@@ -6,9 +6,15 @@ import flixel.math.FlxVector;
 import gameObjects.Ball;
 import openfl.Assets;
 import openfl.geom.Point;
+import flixel.text.FlxText;
 
  class Tools 
 {
+	 public static function getTextLabel(x:Int, y:Int, text: String, size:Int){
+		var textLabel = new FlxText(x, y, 0, text);
+		textLabel.setFormat("fonts/Supersonic-Rocketship.ttf", size);
+		return textLabel;
+	}
 	 public static function getSpriteWithSize(path:String, width:Float, height:Float):FlxSprite{
 		var image = new FlxSprite();
 		image.loadGraphic(Assets.getBitmapData(path));
