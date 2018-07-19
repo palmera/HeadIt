@@ -1,4 +1,5 @@
 package helpers;
+import flixel.group.FlxGroup;
 import gameObjects.Ball;
 import states.GameState;
 import flixel.FlxObject;
@@ -7,11 +8,12 @@ import flixel.math.FlxPoint;
 import flixel.addons.nape.FlxNapeSprite;
 import states.MatchState;
 import haxe.Timer;
+import nape.dynamics.InteractionGroup;
 /**
  * ...
  * @author ...
  */
-class BallManager 
+class BallManager extends FlxGroup
 {
 
 	
@@ -19,8 +21,11 @@ class BallManager
 	var positions:Array<Float>;
 	var match:MatchState;
 	var newBallTimer:Timer;
+	var group:InteractionGroup;
 	public function new(pos:Array<Float>, g:MatchState) 
 	{
+		super();
+		group = new InteractionGroup(true);
 		positions = pos;
 		match = g;
 		balls = new Array<Ball>();
@@ -38,10 +43,10 @@ class BallManager
 		//newBall.velocity.y = FlxG.height * 52 / 32;
 		//newBall.x = positions[0]+match.myPlayer.getHeadOffset();
 		//newBall.y = 0;
-		var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.4);
-		newBall.body.velocity.x = -System.SPEED_X;
-		newBall.body.velocity.y = FlxG.height * 52 / 32;
-		this.match.add(newBall);
+		var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.5,group);
+		newBall.body.velocity.x = FlxG.width*-45/56;
+		newBall.body.velocity.y = FlxG.height * 2;
+		this.add(newBall);
 		balls.push(newBall);
 
 		//var newBall = new 

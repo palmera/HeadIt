@@ -10,6 +10,7 @@ import helpers.SoundManager;
 class Team extends FlxSpriteGroup {
     public var shirt:FlxSprite;
     public var head:FlxSprite;
+	public var collisionHead:FlxSprite;
 	var body:FlxSprite;
     var name:String;
     var id:Int;
@@ -35,6 +36,13 @@ class Team extends FlxSpriteGroup {
 	private function setHead():Void{
 		this.head = new FlxSprite(0, 0, "img/players/" + name+"Head.png");
 		this.add(this.head);
+		
+		this.collisionHead = Tools.getSpriteWithSize("img/players/" + name+"Head.png", 65, 65);
+		this.collisionHead.x = 22;
+		this.collisionHead.y = 0;
+		this.collisionHead.set_visible(false);
+		this.add(this.collisionHead);	
+		
 	}
 	private function setShirt():Void {//300*340
 		this.shirt = new FlxSprite(0, 0, "img/players/" + name+"Shirt.png");

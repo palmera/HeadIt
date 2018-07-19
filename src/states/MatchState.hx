@@ -11,6 +11,11 @@ import flixel.addons.nape.FlxNapeSpace;
 import helpers.BallManager;
 import helpers.Balls;
 import flixel.addons.nape.FlxNapeSprite;
+import nape.phys.BodyType;
+import nape.dynamics.InteractionFilter;
+import nape.phys.Body;
+import nape.shape.Polygon;
+import flixel.FlxObject;
 //import helpers.PlayMode;
 /**
  * ...
@@ -35,6 +40,9 @@ class MatchState extends FlxState
 	var scoreLabel:FlxText;
 	var gameMode:Int;
 	
+	var floor:FlxSprite;
+	var leftLimit:FlxSprite;
+	var rightLimit:FlxSprite;
 	var ballManager:BallManager;
 	
 	
@@ -87,6 +95,7 @@ class MatchState extends FlxState
 	
 	private function setBalls(){
 		ballManager = new BallManager(positions, this);
+		add(ballManager);
 	}
 	
 	private function setScoreLabel(){
@@ -113,7 +122,7 @@ class MatchState extends FlxState
 		opponent.x = positions[5];
 		opponent.y = PLAYER_Y_POS;
 		add(opponent);
-		loadPosts();
+		
 	}
 	override public function create():Void{
 		setVariables();
@@ -123,18 +132,42 @@ class MatchState extends FlxState
 		loadTeams();
 		
 		FlxNapeSpace.init();
-		var ground = FlxG.height - 30;
+		var ground = FlxG.height - 10;
 		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground);
-		FlxNapeSpace.createWalls(0, 0, 30, ground);
-		FlxNapeSpace.createWalls(FlxG.width-30, ground/2, FlxG.width, ground);
+		FlxNapeSpace.createWalls(-10, 0, -9, ground);
+		FlxNapeSpace.createWalls(FlxG.width+10, 2*ground/3, FlxG.width+11, ground);
 		
 		
 		if (FlxNapeSpace.space.gravity.y != 800)
 			FlxNapeSpace.space.gravity.setxy(0, 800);
 			
 		FlxNapeSpace.drawDebug = true;
-		setBalls();
 		
+		
+		floor = Tools.getSpriteWithSize("img/players/UruguayHead.png", FlxG.width, 10);
+		floor.x = 0;
+		floor.y = ground-1;
+		floor.set_visible(false);
+		this.add(floor);
+		
+		leftLimit = Tools.getSpriteWithSize("img/players/UruguayHead.png", 1, FlxG.height/3);
+		leftLimit.x = 0;
+		leftLimit.y = 2*FlxG.height/3;
+		leftLimit.set_visible(false);
+		this.add(leftLimit);
+		
+		rightLimit = Tools.getSpriteWithSize("img/players/UruguayHead.png", 1, FlxG.height/3);
+		rightLimit.x = FlxG.width;
+		rightLimit.y = 2*FlxG.height/3;
+		rightLimit.set_visible(false);
+		this.add(rightLimit);
+		
+		
+	
+		
+		
+		setBalls();
+		loadPosts();
 	}
 	
 	public function new(team1:Team,team2:Team, mode:Int) 
@@ -160,19 +193,7 @@ class MatchState extends FlxState
     
     
 
-    player.physicsHead.physicsBody.collisionType=@"headCollision";
-    opponent.physicsHead.physicsBody.collisionType=@"headCollision";
-   
-
-   
-    [self schedule:@selector(addBall) interval:8];
-    //timer = [NSTimer scheduledTimerWithTimeInterval:8 target:self selector:@selector(addBall) userInfo:nil repeats:YES];
-    
-    self.physicsWorld = [CCPhysicsNode node];
-    self.physicsWorld.gravity = ccp(0,-800);
-    // self.physicsWorld.debugDraw = YES;
-    self.physicsWorld.collisionDelegate = self;
-    [self addChild:self.physicsWorld z:10];
+  
     
     
     
@@ -237,6 +258,70 @@ class MatchState extends FlxState
     return self;
 
 		 * */
+	}
+	
+	
+	override public function update(elapsed:Float):Void
+	{
+		/*timerCounter += elapsed;
+		if (timerCounter > maxTimerCounter && !hasStarted){
+			startGame();
+			timerCounter = 0;
+		}
+		if (hasStarted){
+			for(ball in ballManager.balls){
+				FlxG.overlap(myPlayer.head, ball, playerBallCollision);
+				FlxG.overlap(opponent.head, ball, playerBallCollision);
+			}
+			
+		}*/
+		
+		for(ball in ballManager.balls){
+				FlxG.overlap(myPlayer.collisionHead, ball, playerBallCollision);
+				FlxG.overlap(opponent.collisionHead, ball, playerBallCollision);
+				FlxG.overlap(floor, ball, ballFloorCollision);
+				FlxG.overlap(leftLimit, ball, ballFloorCollision);
+				FlxG.overlap(rightLimit, ball, ballFloorCollision);
+		}
+		
+   		if (FlxG.keys.justPressed.LEFT)
+		{
+			myPlayer.moveLeft();
+			myPlayer.x = positions[myPlayer.getCurrentPosition()];
+		}
+		
+		if (FlxG.keys.justPressed.RIGHT)
+		{
+			myPlayer.moveRight();
+			myPlayer.x = positions[myPlayer.getCurrentPosition()];
+		}
+		super.update(elapsed);
+	}
+	
+	
+	function ballFloorCollision(aFloor:FlxObject, aBall:FlxObject):Void
+	{
+		var ball = cast(aBall, Ball);
+		trace("piso");
+		
+	}
+function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
+	{
+		var ball = cast(aBall, Ball);
+		
+		var collidedWithPlayer = ball.x < FlxG.width / 2;
+		var collidedWithOpponent = ball.x > FlxG.width / 2;
+		
+		if (collidedWithPlayer) {
+			//SoundManager.Instance().playHeadBall();
+			//trace("col");
+			
+		} 
+		
+		
+		
+		
+		
 	}
 	
 	public function updateOpponentPosition(nextPosition:Int) 
