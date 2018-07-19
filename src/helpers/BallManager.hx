@@ -5,6 +5,7 @@ import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.addons.nape.FlxNapeSprite;
+import states.MatchState;
 /**
  * ...
  * @author ...
@@ -15,12 +16,12 @@ class BallManager
 	
 	public var ball:Ball;
 	var positions:Array<Float>;
-	var game:GameState;
+	var match:MatchState;
 	
-	public function new(pos:Array<Float>, g:GameState) 
+	public function new(pos:Array<Float>, g:MatchState) 
 	{
 		positions = pos;
-		game = g;
+		match = g;
 	}
 	
 	public function removeAll(){
@@ -29,11 +30,11 @@ class BallManager
 	
 	public function start(){
 		ball = new Ball();
-		ball.x = positions[0]+game.myPlayer.getHeadOffset();
+		ball.x = positions[0]+match.myPlayer.getHeadOffset();
 		ball.y = 100;
 		ball.acceleration.y = System.GRAVITY;
 		ball.from = 0;
-		game.add(ball);
+		match.add(ball);
 	}
 	
 	public function handleBall(aBall:FlxObject):Void 
@@ -52,7 +53,7 @@ class BallManager
 		trace('ball from: ' + ball.from);
 		trace('ball to: ' + ball.to);
 		sendBallToPosition(ball,ball.from, ball.to);
-		game.updateOpponentPosition(ball.to);
+		match.updateOpponentPosition(ball.to);
 	}
 	
 	function sendBallToPosition(aBall:Ball, currentPosition:Int, nextPosition:Int) 
@@ -68,7 +69,7 @@ class BallManager
 		var currentPoint = positions[currentPosition];
 		var nextPoint = positions[nextPosition] - ballOffset;
 		
-		var a = Tools.BallisticVel(new FlxPoint(nextPoint, game.PLAYER_Y_POS-ball.health), 55, ball);
+		var a = Tools.BallisticVel(new FlxPoint(nextPoint, match.PLAYER_Y_POS-ball.health), 55, ball);
 		trace('ballistic: ' + a);
 		
 		ball.velocity.y = -Math.abs(a.y);

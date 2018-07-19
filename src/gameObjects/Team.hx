@@ -13,7 +13,7 @@ class Team extends FlxSpriteGroup {
 	var body:FlxSprite;
     var name:String;
     var id:Int;
-	var position:Int;
+	public var position:Int;
 	public var isEnemy:Bool;
 	
 	var playerHeight:Float;

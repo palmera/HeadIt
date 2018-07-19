@@ -86,7 +86,7 @@ class GameState extends FlxState
 		loadTeams();
 		loadPosts();
 		hasStarted = false;
-		ballManager = new BallManager(positions, this);
+		//ballManager = new BallManager(positions, this);
 	}
 	
 	private function startBalls(){
