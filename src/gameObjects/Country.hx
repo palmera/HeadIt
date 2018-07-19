@@ -10,14 +10,20 @@ class Country
 {
 	private var name: String;
 	private var countryFlag: FlxSprite;
+	private var countryLockedFlag: FlxSprite;
 	private var difficulty:Int;
 	private var team: Team;
+	private var cost: Int;
+	private var locked: Bool;
 
-	public function new(name: String, flag:FlxSprite, difficulty:Int) 
+	public function new(name: String, flag:FlxSprite, lockedFlag:FlxSprite, difficulty:Int, cost:Int, locked:Bool) 
 	{
 		this.name = name;
 		this.countryFlag = flag;
+		this.countryLockedFlag = lockedFlag;
 		this.difficulty = difficulty;
+		this.cost = cost;
+		this.locked = locked;
 		var team = new Team(name);
 		this.team = team;
 	}
@@ -27,14 +33,33 @@ class Country
 	}
 	
 	public function getFlag():FlxSprite{
-		return countryFlag;
+		if (this.isLocked()) 
+		{
+			return countryLockedFlag;
+		} else {
+			return countryFlag;
+		}
 	}
 	
 	public function getTeam():Team{
 		return team;
 	}
 	
+
 	public function getDifficulty():Int{
 		return difficulty;
 	}
+
+	public function getCost(): Int{
+		return cost;
+	}
+	
+	public function isLocked(): Bool{
+		return locked;
+	}
+	
+	public function unlock(): Void{
+		locked = false;
+	}
+	
 }

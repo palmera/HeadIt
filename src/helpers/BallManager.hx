@@ -1,41 +1,85 @@
 package helpers;
+import flixel.group.FlxGroup;
 import gameObjects.Ball;
 import states.GameState;
 import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.addons.nape.FlxNapeSprite;
+import states.MatchState;
+import haxe.Timer;
+import nape.dynamics.InteractionGroup;
 /**
  * ...
  * @author ...
  */
-class BallManager 
+class BallManager extends FlxGroup
 {
 
-	public var opponentBalls:Array<Ball>;
 	
-	public var ball:Ball;
+	public var balls:Array<Ball>;
 	var positions:Array<Float>;
-	var game:GameState;
-	
-	public function new(pos:Array<Float>, g:GameState) 
+	var match:MatchState;
+	var newBallTimer:Timer;
+	var group:InteractionGroup;
+	public function new(pos:Array<Float>, g:MatchState) 
 	{
+		super();
+		group = new InteractionGroup(true);
 		positions = pos;
-		game = g;
-		opponentBalls = new Array<Ball>();
+		match = g;
+		balls = new Array<Ball>();
+		start();
 	}
 	
 	public function removeAll(){
 		
 	}
 	
+	public function addBall(){
+		trace("add ball");
+		//var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.4);
+		//newBall.velocity.x = -System.SPEED_X;
+		//newBall.velocity.y = FlxG.height * 52 / 32;
+		//newBall.x = positions[0]+match.myPlayer.getHeadOffset();
+		//newBall.y = 0;
+		var newBall = new Ball(Balls.NORMAL, FlxG.width * 1.1, FlxG.height * 0.5,group);
+		newBall.body.velocity.x = FlxG.width*-45/56;
+		newBall.body.velocity.y = FlxG.height * 2;
+		this.add(newBall);
+		balls.push(newBall);
+
+		//var newBall = new 
+	/*
+	 * Ball* ballToAdd = [Ball createWithName:ballName];
+    ballToAdd.position=ccp(1.1f*screenWidth,0.4f*screenHeight);
+    ballToAdd.physicsBody.velocity=ccp((-450.0f/568.0f)*screenWidth,(520.0f/320.0f)*screenHeight);
+    [self.physicsWorld addChild:ballToAdd z:2];
+    [allBalls addObject:ballToAdd];
+    addBallTime=[NSDate date];
+    // ballToAdd.scale=0.8;
+	
+	
+
+		
+		add(newBall);
+	 * */	
+	}
+	
 	public function start(){
-		ball = new Ball();
-		ball.x = positions[0]+game.myPlayer.getHeadOffset();
+		
+		addBall();
+		newBallTimer = new haxe.Timer(8000);
+		newBallTimer.run = function ()
+		{
+			addBall();
+		};
+		/*ball = new Ball();
+		ball.x = positions[0]+match.myPlayer.getHeadOffset();
 		ball.y = 100;
 		ball.acceleration.y = System.GRAVITY;
 		ball.from = 0;
-		game.add(ball);
+		match.add(ball);*/
 	}
 	
 	public function handleBall(aBall:FlxObject):Void 
@@ -54,27 +98,27 @@ class BallManager
 		trace('ball from: ' + ball.from);
 		trace('ball to: ' + ball.to);
 		sendBallToPosition(ball,ball.from, ball.to);
-		game.updateOpponentPosition(ball.to);
+		match.updateOpponentPosition(ball.to);
 	}
 	
 	function sendBallToPosition(aBall:Ball, currentPosition:Int, nextPosition:Int) 
 	{
 		var ballOffset = 0;
 		if (nextPosition < 3) {
-			ball.velocity.x = -System.SPEED_X;
+			aBall.velocity.x = -System.SPEED_X;
 		} else {
-			ball.velocity.x = System.SPEED_X;
+			aBall.velocity.x = System.SPEED_X;
 			ballOffset = 20;
 		}
 		trace('sendBallToPosition nextPosition: ' + nextPosition);
 		var currentPoint = positions[currentPosition];
 		var nextPoint = positions[nextPosition] - ballOffset;
 		
-		var a = Tools.BallisticVel(new FlxPoint(nextPoint, game.PLAYER_Y_POS-ball.health), 55, ball);
+		var a = Tools.BallisticVel(new FlxPoint(nextPoint, match.PLAYER_Y_POS-aBall.health), 55, aBall);
 		trace('ballistic: ' + a);
 		
-		ball.velocity.y = -Math.abs(a.y);
-		ball.velocity.x = a.x;
+		aBall.velocity.y = -Math.abs(a.y);
+		aBall.velocity.x = a.x;
 	}
 
 	

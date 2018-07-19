@@ -1,28 +1,52 @@
 package states;
 import flixel.FlxState;
+import flixel.text.FlxText;
+import gameObjects.Ball;
 import gameObjects.Team;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
+import helpers.Tools;
+import flixel.FlxSprite;
+import flixel.addons.nape.FlxNapeSpace;
+import helpers.BallManager;
+import helpers.Balls;
+import flixel.addons.nape.FlxNapeSprite;
+import nape.phys.BodyType;
+import nape.dynamics.InteractionFilter;
+import nape.phys.Body;
+import nape.shape.Polygon;
+import flixel.FlxObject;
+//import helpers.PlayMode;
 /**
  * ...
  * @author 
  */
 class MatchState extends FlxState
 {
-	var myPlayer:Team;
+	public var myPlayer:Team;
 	var opponent:Team;
 	
-	var screenWidth;
-	var screenHeight;
+	var screenWidth:Float;
+	var screenHeight:Float;
 	
 	var matchEndScore = 3;
-	var myScore;
-	var opponentScore;
+	var myScore:Int;
+	var opponentScore:Int;
 	var positions:Array<Float>;
-	var movingAmount;
+	var movingAmount:Float;
 	
 	var startingPointLeft:FlxPoint;
 	var startingPointRight:FlxPoint;
+	var scoreLabel:FlxText;
+	var gameMode:Int;
+	
+	var floor:FlxSprite;
+	var leftLimit:FlxSprite;
+	var rightLimit:FlxSprite;
+	var ballManager:BallManager;
+	
+	
+	public var PLAYER_Y_POS:Float = 255;
 	
 	private function setVariables(){
 		screenHeight = FlxG.height;
@@ -38,7 +62,7 @@ class MatchState extends FlxState
 		background.x = 0;
 		background.y = 0;
 		add(background);
-		loadPosts();
+		
 	}
 	
 	private function loadPosts()
@@ -52,7 +76,8 @@ class MatchState extends FlxState
 		add(playerFrontGoalPosts);
 		
 		enemyFrontGoalPosts = Tools.getSpriteWithSize("img/GoalFront-hd.png", -180, 263);
-		//TODO: x e y
+		enemyFrontGoalPosts.y = 228;
+		enemyFrontGoalPosts.x = 762;
 		add(enemyFrontGoalPosts);
 	}
 	
@@ -65,21 +90,97 @@ class MatchState extends FlxState
 			positions.push(pos);
 		}
 		startingPointLeft = new FlxPoint(screenWidth *-0.1, screenHeight * 0.4);
-		startingPointRight = new FlxPoint(screenWidth 1.1, screenHeight * 0.4);
+		startingPointRight = new FlxPoint(screenWidth* 1.1, screenHeight * 0.4);
 	}
 	
 	private function setBalls(){
 		ballManager = new BallManager(positions, this);
+		add(ballManager);
 	}
-	public function new(team1:Team,team2:Team) 
+	
+	private function setScoreLabel(){
+		/*if(gameMode == PlayMode.PRACTICE){
+			scoreLabel = new FlxText(screenWidth / 2, screenHeight * 0.05,0,""+myScore,16);
+		}
+		else{*/
+			scoreLabel = new FlxText(0, screenHeight * 0.05,screenWidth,myPlayer.get_name()+" "+myScore+" - "+opponentScore+" "+opponent.get_name());
+		//}
+		scoreLabel.setFormat("fonts/Supersonic-Rocketship.ttf", 40);
+		scoreLabel.alignment = "center";
+		add(scoreLabel);
+	}
+	
+	private function loadTeams(){	
+		myPlayer.position = 0;
+		opponent.position = 5;
+		myPlayer.Flip();
+		myPlayer.x = positions[0];
+		myPlayer.y = PLAYER_Y_POS;
+		
+		add(myPlayer);
+		
+		opponent.x = positions[5];
+		opponent.y = PLAYER_Y_POS;
+		add(opponent);
+		
+	}
+	override public function create():Void{
+		setVariables();
+		setAssets();
+		
+		setScoreLabel();
+		loadTeams();
+		
+		FlxNapeSpace.init();
+		var ground = FlxG.height - 10;
+		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground);
+		FlxNapeSpace.createWalls(-10, 0, -9, ground);
+		FlxNapeSpace.createWalls(FlxG.width+10, 2*ground/3, FlxG.width+11, ground);
+		
+		
+		if (FlxNapeSpace.space.gravity.y != 800)
+			FlxNapeSpace.space.gravity.setxy(0, 800);
+			
+		FlxNapeSpace.drawDebug = true;
+		
+		
+		floor = Tools.getSpriteWithSize("img/players/UruguayHead.png", FlxG.width, 10);
+		floor.x = 0;
+		floor.y = ground-1;
+		floor.set_visible(false);
+		this.add(floor);
+		
+		leftLimit = Tools.getSpriteWithSize("img/players/UruguayHead.png", 1, FlxG.height/3);
+		leftLimit.x = 0;
+		leftLimit.y = 2*FlxG.height/3;
+		leftLimit.set_visible(false);
+		this.add(leftLimit);
+		
+		rightLimit = Tools.getSpriteWithSize("img/players/UruguayHead.png", 1, FlxG.height/3);
+		rightLimit.x = FlxG.width;
+		rightLimit.y = 2*FlxG.height/3;
+		rightLimit.set_visible(false);
+		this.add(rightLimit);
+		
+		
+	
+		
+		
+		setBalls();
+		loadPosts();
+	}
+	
+	public function new(team1:Team,team2:Team, mode:Int) 
 	{
 		super();
+		
+		gameMode = mode;
 		myPlayer = team1;
 		opponent = team2;
 		
-		setVariables();
-		setAssets();
-		setBalls();
+		
+		
+		
 		
 		/*
 		 * 
@@ -91,58 +192,8 @@ class MatchState extends FlxState
             [self schedule:@selector(decreaseTime) interval:1];
     
     
-    opponentBalls = [[NSMutableArray alloc]init];
-    
-    playerScore=0;
-    opponentScore=0;
-    if([type isEqualToString:@"Practice"]){
-        scoreLabel=[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@ %i",user.name,playerScore] fontName:@"Verdana-Bold" fontSize:16.0f];
 
-    }
-    else scoreLabel=[CCLabelTTF labelWithString:[NSString stringWithFormat:@"%@ %i - %i %@",user.name,playerScore,opponentScore,[opponent getName]] fontName:@"Verdana-Bold" fontSize:16.0f];
-    scoreLabel.position=ccp(screenWidth*0.5,screenHeight*0.95);
-    [self addChild:scoreLabel];
-    
-    player.matchPosition=0;
-    opponent.matchPosition=5;
-    player.position=ccp(point1.x,0.20f*screenHeight);
-    opponent.position=ccp(point6.x,0.20f*screenHeight);
-    //player.scale=0.4;
-    opponent.scale=0.4;
-    //player.physicsHead.scale=0.4;
-    player.head.opacity=0;
-    player.scaleX=-0.4;
-    player.scaleY=0.4;
-    player.physicsHead.scaleY=0.4;
-    player.physicsHead.scaleX=-0.4;
-    opponent.head.opacity=0;
-    player.physicsHead.position=ccp(point1.x+0.012f*screenWidth,0.427f*screenHeight);
-    opponent.physicsHead.position=ccp(point6.x-0.012f*screenWidth,0.427f*screenHeight);
-    player.yBodyPos=player.position.y;
-    player.yHeadPos=player.physicsHead.position.y;
-    opponent.yBodyPos=opponent.position.y;
-    opponent.yHeadPos=opponent.physicsHead.position.y;
-    player.physicsHead.physicsBody.type = CCPhysicsBodyTypeStatic;
-    player.physicsHead.physicsBody.collisionType=@"headCollision";
-    opponent.physicsHead.physicsBody.type = CCPhysicsBodyTypeStatic;
-    opponent.physicsHead.physicsBody.collisionType=@"headCollision";
-    opponent.physicsHead.scale=0.4;
-    //[self addChild:player];
-    //[self addChild:opponent];
-    
-    allBalls =[[NSMutableArray alloc]init];
-
-    [self addChild:player z:2];
-    [self addChild:opponent z:2];
-    //Cada 6 segundos ejecuta el metodo addBall
-    [self schedule:@selector(addBall) interval:8];
-    //timer = [NSTimer scheduledTimerWithTimeInterval:8 target:self selector:@selector(addBall) userInfo:nil repeats:YES];
-    
-    self.physicsWorld = [CCPhysicsNode node];
-    self.physicsWorld.gravity = ccp(0,-800);
-    // self.physicsWorld.debugDraw = YES;
-    self.physicsWorld.collisionDelegate = self;
-    [self addChild:self.physicsWorld z:10];
+  
     
     
     
@@ -207,6 +258,75 @@ class MatchState extends FlxState
     return self;
 
 		 * */
+	}
+	
+	
+	override public function update(elapsed:Float):Void
+	{
+		/*timerCounter += elapsed;
+		if (timerCounter > maxTimerCounter && !hasStarted){
+			startGame();
+			timerCounter = 0;
+		}
+		if (hasStarted){
+			for(ball in ballManager.balls){
+				FlxG.overlap(myPlayer.head, ball, playerBallCollision);
+				FlxG.overlap(opponent.head, ball, playerBallCollision);
+			}
+			
+		}*/
+		
+		for(ball in ballManager.balls){
+				FlxG.overlap(myPlayer.collisionHead, ball, playerBallCollision);
+				FlxG.overlap(opponent.collisionHead, ball, playerBallCollision);
+				FlxG.overlap(floor, ball, ballFloorCollision);
+				FlxG.overlap(leftLimit, ball, ballFloorCollision);
+				FlxG.overlap(rightLimit, ball, ballFloorCollision);
+		}
+		
+   		if (FlxG.keys.justPressed.LEFT)
+		{
+			myPlayer.moveLeft();
+			myPlayer.x = positions[myPlayer.getCurrentPosition()];
+		}
+		
+		if (FlxG.keys.justPressed.RIGHT)
+		{
+			myPlayer.moveRight();
+			myPlayer.x = positions[myPlayer.getCurrentPosition()];
+		}
+		super.update(elapsed);
+	}
+	
+	
+	function ballFloorCollision(aFloor:FlxObject, aBall:FlxObject):Void
+	{
+		var ball = cast(aBall, Ball);
+		trace("piso");
+		
+	}
+function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
+	{
+		var ball = cast(aBall, Ball);
+		
+		var collidedWithPlayer = ball.x < FlxG.width / 2;
+		var collidedWithOpponent = ball.x > FlxG.width / 2;
+		
+		if (collidedWithPlayer) {
+			//SoundManager.Instance().playHeadBall();
+			//trace("col");
+			
+		} 
+		
+		
+		
+		
+		
+	}
+	
+	public function updateOpponentPosition(nextPosition:Int) 
+	{
+		
 	}
 	
 }

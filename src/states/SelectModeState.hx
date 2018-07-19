@@ -22,6 +22,7 @@ class SelectModeState extends FlxState
 	private var btn_practice: Button;
 	private var btn_quick_game: Button;
 	private var btn_tournament: Button;
+	private var btn_store: Button;
 	
 	public function new() 
 	{
@@ -41,14 +42,17 @@ class SelectModeState extends FlxState
 
 		btn_practice = new Button(82, 64, 'img/practiceMode.png', 'img/practiceModeHover.png', 'img/practiceModeClick.png');
 		btn_practice.btn.onUp.callback = onPractice;
-		btn_quick_game = new Button( 60, 370, 'img/quickGameMode.png', 'img/quickGameModeHover.png', 'img/quickGameModeClick.png');
+		btn_quick_game = new Button(60, 370, 'img/quickGameMode.png', 'img/quickGameModeHover.png', 'img/quickGameModeClick.png');
 		btn_quick_game.btn.onUp.callback = onSelectTeam;
 		btn_tournament = new Button(365, 182, 'img/tournamentMode.png', 'img/tournamentModeHover.png', 'img/tournamentModeClick.png');
-		btn_tournament.btn.onUp.callback = onLoad;
+		btn_tournament.btn.onUp.callback = onStartTournament;
+		btn_store = new Button(395, 202, 'img/Store.png', 'img/StoreHover.png', 'img/StoreClick.png');
+		btn_store.btn.onUp.callback = onOpenStore;
 		
 		add(btn_practice.btn);
 		add(btn_quick_game.btn);
 		add(btn_tournament.btn);
+		add(btn_store.btn);
 	}
 	
 	private function onSelectTeam():Void
@@ -61,10 +65,15 @@ class SelectModeState extends FlxState
 		FlxG.switchState(new SelectTeamState(PlayMode.PRACTICE));
 	}
 
-	private function onLoad():Void
+	private function onStartTournament():Void
 	{
 		FlxG.switchState(new SelectTeamState(PlayMode.TOURNAMENT));
 	}	
+	
+	private function onOpenStore():Void
+	{
+		FlxG.switchState(new StoreState());
+	}
 }
 
 

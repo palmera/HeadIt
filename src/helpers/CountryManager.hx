@@ -16,35 +16,51 @@ class CountryManager
 	{
 		var uruguayFlag = new FlxSprite();
 		uruguayFlag.loadGraphic('img/Flags/UruguayFlag.png');
-		var Uruguay = new Country("Uruguay", uruguayFlag, 8);
+		var uruguayLockedFlag = new FlxSprite();
+		uruguayLockedFlag.loadGraphic('img/Flags/UruguayLockedFlag.png');
+		var Uruguay = new Country("Uruguay", uruguayFlag, uruguayLockedFlag, 8, 0, false);
 		
 		var argenitnaFlag = new FlxSprite();
 		argenitnaFlag.loadGraphic('img/Flags/ArgentinaFlag.png');
-		var Argentina = new Country("Argentina", argenitnaFlag, 7);
+		var argenitnaLockedFlag = new FlxSprite();
+		argenitnaLockedFlag.loadGraphic('img/Flags/ArgentinaLockedFlag.png');
+		var Argentina = new Country("Argentina", argenitnaFlag, argenitnaLockedFlag, 7, 50, true);
 		
 		var brasilFlag = new FlxSprite();
 		brasilFlag.loadGraphic('img/Flags/BrazilFlag.png');
-		var Brasil = new Country("Brazil", brasilFlag, 8);
+		var brasilLockedFlag = new FlxSprite();
+		brasilLockedFlag.loadGraphic('img/Flags/BrazilLockedFlag.png');
+		var Brasil = new Country("Brazil", brasilFlag, brasilLockedFlag, 8, 60, true);
 		
 		var croatiaFlag = new FlxSprite();
 		croatiaFlag.loadGraphic('img/Flags/CroatiaFlag.png');
-		var Croatia = new Country("Croatia", croatiaFlag, 8);
+		var croatiaLockedFlag = new FlxSprite();
+		croatiaLockedFlag.loadGraphic('img/Flags/CroatiaLockedFlag.png');
+		var Croatia = new Country("Croatia", croatiaFlag, croatiaLockedFlag, 8, 90, true);
 		
 		var englandFlag = new FlxSprite();
 		englandFlag.loadGraphic('img/Flags/EnglandFlag.png');
-		var England = new Country("England", englandFlag, 6);
+		var englandLockedFlag = new FlxSprite();
+		englandLockedFlag.loadGraphic('img/Flags/EnglandLockedFlag.png');
+		var England = new Country("England", englandFlag, englandLockedFlag, 6, 70, true);
 		
 		var portugalFlag = new FlxSprite();
 		portugalFlag.loadGraphic('img/Flags/PortugalFlag.png');
-		var Portugal = new Country("Portugal", portugalFlag, 6);
+		var portugalLockedFlag = new FlxSprite();
+		portugalLockedFlag.loadGraphic('img/Flags/PortugalLockedFlag.png');
+		var Portugal = new Country("Portugal", portugalFlag, portugalLockedFlag, 6, 50, true);
 		
 		var russiaFlag = new FlxSprite();
 		russiaFlag.loadGraphic('img/Flags/RussiaFlag.png');
-		var Russia = new Country("Russia", russiaFlag, 5);
+		var russiaLockedFlag = new FlxSprite();
+		russiaLockedFlag.loadGraphic('img/Flags/RussiaLockedFlag.png');
+		var Russia = new Country("Russia", russiaFlag, russiaLockedFlag, 5, 50, true);
 		
 		var franceFlag = new FlxSprite();
 		franceFlag.loadGraphic('img/Flags/FranceFlag.png');
-		var France = new Country("France", franceFlag, 5);
+		var franceLockedFlag = new FlxSprite();
+		franceLockedFlag.loadGraphic('img/Flags/FranceLockedFlag.png');
+		var France = new Country("France", franceFlag, franceLockedFlag, 5, 100, true);
 		
 		_countries.push(Uruguay);
 		_countries.push(Argentina);
