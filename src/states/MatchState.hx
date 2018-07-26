@@ -22,6 +22,9 @@ import helpers.PlayMode;
 import gameObjects.Tournament;
 import Random;
 import helpers.TournamentStages;
+import helpers.WalletManager;
+import helpers.SoundManager;
+import nape.phys.Material;
 //import helpers.PlayMode;
 /**
  * ...
@@ -62,6 +65,8 @@ class MatchState extends FlxState
 	var time2:Float;
 	var time3:Float;
 	var time4:Float;
+	
+	var ballType:String;
 
 	
 	public var isUpdatingScore = false;
@@ -82,6 +87,18 @@ class MatchState extends FlxState
 			level = tournament.getTournamentState();
 		}
 		else level = 1;
+		if(mode == PlayMode.PRACTICE){
+			ballType = Balls.NORMAL;
+		}
+		else if (mode == PlayMode.QUICKGAME){
+			ballType = Balls.BRAZUCA;
+		}
+		else {
+			if(t.getTournamentState() != 3){
+				ballType = Balls.JABULANI;
+			}
+			else ballType = Balls.TEAMGEIST;
+		}
 	}
 	
 	
@@ -122,7 +139,10 @@ class MatchState extends FlxState
 	}
 	private function setAssets(){
 		var background:FlxSprite;
-		background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
+		if(gameMode == PlayMode.PRACTICE){
+			background = Tools.getSpriteWithSize("img/beachBack.png",FlxG.width,FlxG.height);
+		}
+		else background = Tools.getSpriteWithSize("img/Stadium.png",FlxG.width,FlxG.height);
 		background.x = 0;
 		background.y = 0;
 		add(background);
@@ -131,8 +151,11 @@ class MatchState extends FlxState
 	private function initPhysics(){
 		FlxNapeSpace.init();
 		var ground = FlxG.height - 10;
-		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground);
-		FlxNapeSpace.createWalls(-10, 0, -9, ground);
+		var netMaterial:Material = new Material( -0.7);
+		var floorMaterial:Material = new Material(-0.3);
+		
+		FlxNapeSpace.createWalls(0, ground - 10, FlxG.width, ground,10,floorMaterial);
+		FlxNapeSpace.createWalls(-10, 0, -9, ground,10,netMaterial);
 		FlxNapeSpace.createWalls(FlxG.width+10, 2*ground/3, FlxG.width+11, ground);
 		
 		
@@ -183,7 +206,7 @@ class MatchState extends FlxState
 	
 	
 	private function setBalls(){
-		ballManager = new BallManager(positions, this);
+		ballManager = new BallManager(positions, this,ballType);
 		add(ballManager);
 	}
 	
@@ -233,12 +256,12 @@ class MatchState extends FlxState
 		else{
 			switch(level){
 				case 1:
-					minTime = 0.7;				
+					minTime = 1;				
 				case 2:{
-					minTime = 0.5;
+					minTime = 0.7;
 				}
 				case 3:{
-					minTime = 0.3;
+					minTime = 0.4;
 				}
 				default:{
 					minTime = 0.7;
@@ -274,153 +297,7 @@ class MatchState extends FlxState
 		}
 		super.update(elapsed);
 	}
-	
-	function clearScreen(){
-		ballManager.stop();
-		for(i in 0...ballManager.balls.length){
-					var chosenBall = ballManager.balls[i];
-					ballManager.remove(chosenBall);
-					chosenBall = null;
-		}
-		remove(ballManager);
-		ballManager = null;
-		remove(myPlayer) ;
-		remove(opponent);
-		myPlayer = null;
-		opponent = null;
-		country1 = null;
-		country2 = null;
-	}
-	
-	function updateScore(){
-		ballManager.stop();
-		isUpdatingScore = true;
-		scoreLabel.text = "" + myPlayer.get_name() + " " + myScore+" - " + opponentScore+" " + opponent.get_name();
-		if (myScore == matchEndScore){//gane
-			var switchTimer = new Timer(2000);
-			switchTimer.run = function(){
-				switchTimer.stop();
-				
-				if (gameMode == PlayMode.QUICKGAME){
-					clearScreen();
-					FlxG.switchState(new SelectModeState());
-				}
-				else {
-					if (this.tournament.getTournamentState() != TournamentStages.Final){
-						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
-						if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
-							this.tournament.pushToSemifinalists(this.tournament.getPlayerCountry());
-							clearScreen();
-							FlxG.switchState(new TournamentState(this.tournament));
-						}
-						if (this.tournament.getTournamentState() == TournamentStages.Final){
-							this.tournament.pushToFinalists(this.tournament.getPlayerCountry());
-							clearScreen();
-							FlxG.switchState(new TournamentState(this.tournament));
-						}
-					}else{
-						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
-						this.tournament.setChampion(tournament.getPlayerCountry());
-						clearScreen();
-						FlxG.switchState(new TournamentState(this.tournament));
-					}
-				}
-			}
-			
-		}
-		else if (opponentScore == matchEndScore){//perdi
-			var switchTimer = new Timer(2000);
-			switchTimer.run = function(){
-				switchTimer.stop();
-				
-				if (gameMode == PlayMode.QUICKGAME){
-					clearScreen();
-					FlxG.switchState(new SelectModeState());
-				}
-				else {
-					if (this.tournament.getTournamentState() == TournamentStages.RoundOfFour){
-						tournament.pushToSemifinalists(this.country2);
-						var semifinalistCountries = this.tournament.getSemifinalistCountries().copy();
-						var c = Random.fromArray([semifinalistCountries[0], semifinalistCountries[1]]);
-						tournament.simulateMatchesSemifinals();
-						tournament.pushToFinalists(c);
-						var finalistCountries = this.tournament.getFinalistCountries().copy();
-						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
-						this.tournament.setChampion(c2);
-						this.tournament.setTournamentState(TournamentStages.EndedLoose);
-						clearScreen();
-						FlxG.switchState(new TournamentState(this.tournament));
-					
-					}
-					else if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
-						tournament.pushToFinalists(this.country2);
-						var finalistCountries = this.tournament.getFinalistCountries().copy();
-						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
-						this.tournament.setChampion(c2);
-						this.tournament.setTournamentState(TournamentStages.EndedLoose);
-						clearScreen();
-						FlxG.switchState(new TournamentState(this.tournament));
-					}
-					else{
-						this.tournament.setChampion(this.country2);
-						this.tournament.setTournamentState(TournamentStages.EndedLoose);
-						clearScreen();
-						FlxG.switchState(new TournamentState(this.tournament));
-					}
-				}
-			}
-			
-		}
-		else{
-			var delay = new Timer(2000);
-			delay.run = function(){
-				delay.stop();
-				isUpdatingScore = false;
-				myPlayer.position = 0;
-				opponent.position = 5;
-				myPlayer.x = positions[0];
-				opponent.x = positions[5];
-				for(i in 0...ballManager.balls.length){
-					var chosenBall = ballManager.balls[i];
-					ballManager.remove(chosenBall);
-				}
-				ballManager.opponentBalls.splice(0, ballManager.opponentBalls.length);
-				ballManager.balls.splice(0, ballManager.balls.length);
-				ballManager.start();
 
-			}
-		}
-
-	}
-	
-	function ballFloorCollision(aFloor:FlxObject, aBall:FlxObject):Void
-	{
-		var ball = cast(aBall, Ball);
-		if (!isUpdatingScore){
-			isUpdatingScore = true;
-			if(ball.count % 2 == 0){
-				if(gameMode == PlayMode.PRACTICE){
-					//PERDISTE
-					var switchTimer = new Timer(2000);
-					switchTimer.run = function(){
-						clearScreen();
-						switchTimer.stop();
-						FlxG.switchState(new SelectModeState());
-					}
-					
-				}
-				else{
-					opponentScore++;
-					this.updateScore();
-				}
-			}
-			else{
-				myScore++;
-				this.updateScore();
-			}
-		}
-		
-	}
 function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
 	{
 		var ball = cast(aBall, Ball);
@@ -670,16 +547,156 @@ function playerBallCollision(aPlayer:FlxObject, aBall:FlxObject):Void
 	
 	
 	
+	function clearScreen(){
+		ballManager.stop();
+		for(i in 0...ballManager.balls.length){
+					var chosenBall = ballManager.balls[i];
+					ballManager.remove(chosenBall);
+					chosenBall = null;
+		}
+		remove(ballManager);
+		ballManager = null;
+		remove(myPlayer) ;
+		remove(opponent);
+		myPlayer = null;
+		opponent = null;
+		country1 = null;
+		country2 = null;
+	}
 	
+	function updateScore(){
+		ballManager.stop();
+		isUpdatingScore = true;
+		scoreLabel.text = "" + myPlayer.get_name() + " " + myScore+" - " + opponentScore+" " + opponent.get_name();
+		
+		if (myScore == matchEndScore){
+			SoundManager.Instance().playEndMatch();
+			var switchTimer = new Timer(2000);
+			switchTimer.run = function(){
+				switchTimer.stop();
+				
+				if (gameMode == PlayMode.QUICKGAME){
+					clearScreen();
+					FlxG.switchState(new SelectModeState());
+				}
+				else {
+					if (this.tournament.getTournamentState() != TournamentStages.Final){
+						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+						if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
+							WalletManager.Instance().addMoney(this.tournament.quarterFinalPrize);
+							this.tournament.pushToSemifinalists(this.tournament.getPlayerCountry());
+							clearScreen();
+							FlxG.switchState(new TournamentState(this.tournament));
+						}
+						if (this.tournament.getTournamentState() == TournamentStages.Final){
+							WalletManager.Instance().addMoney(this.tournament.semiFinalPrize);
+							this.tournament.pushToFinalists(this.tournament.getPlayerCountry());
+							clearScreen();
+							FlxG.switchState(new TournamentState(this.tournament));
+						}
+					}else{
+						WalletManager.Instance().addMoney(this.tournament.finalPrize);
+						this.tournament.setTournamentState(this.tournament.getTournamentState() +1);
+						this.tournament.setChampion(tournament.getPlayerCountry());
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+				}
+			}
+			
+		}
+		else if (opponentScore == matchEndScore){//perdi
+			SoundManager.Instance().playEndMatch();
+			var switchTimer = new Timer(2000);
+			switchTimer.run = function(){
+				switchTimer.stop();
+				
+				if (gameMode == PlayMode.QUICKGAME){
+					clearScreen();
+					FlxG.switchState(new SelectModeState());
+				}
+				else {
+					if (this.tournament.getTournamentState() == TournamentStages.RoundOfFour){
+						tournament.pushToSemifinalists(this.country2);
+						var semifinalistCountries = this.tournament.getSemifinalistCountries().copy();
+						var c = Random.fromArray([semifinalistCountries[0], semifinalistCountries[1]]);
+						tournament.simulateMatchesSemifinals();
+						tournament.pushToFinalists(c);
+						var finalistCountries = this.tournament.getFinalistCountries().copy();
+						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
+						this.tournament.setChampion(c2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					
+					}
+					else if (this.tournament.getTournamentState() == TournamentStages.SemiFinals){
+						tournament.pushToFinalists(this.country2);
+						var finalistCountries = this.tournament.getFinalistCountries().copy();
+						var c2 = Random.fromArray([finalistCountries[0], finalistCountries[1]]);
+						this.tournament.setChampion(c2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+					else{
+						this.tournament.setChampion(this.country2);
+						this.tournament.setTournamentState(TournamentStages.EndedLoose);
+						clearScreen();
+						FlxG.switchState(new TournamentState(this.tournament));
+					}
+				}
+			}
+			
+		}
+		else{
+			var delay = new Timer(2000);
+			delay.run = function(){
+				delay.stop();
+				isUpdatingScore = false;
+				myPlayer.position = 0;
+				opponent.position = 5;
+				myPlayer.x = positions[0];
+				opponent.x = positions[5];
+				for(i in 0...ballManager.balls.length){
+					var chosenBall = ballManager.balls[i];
+					ballManager.remove(chosenBall);
+				}
+				ballManager.opponentBalls.splice(0, ballManager.opponentBalls.length);
+				ballManager.balls.splice(0, ballManager.balls.length);
+				ballManager.start();
+
+			}
+		}
+
+	}
 	
-	
-	
-	
-	
-	
-	
-	public function updateOpponentPosition(nextPosition:Int) 
+	function ballFloorCollision(aFloor:FlxObject, aBall:FlxObject):Void
 	{
+		var ball = cast(aBall, Ball);
+		if (!isUpdatingScore){
+			isUpdatingScore = true;
+			if(ball.count % 2 == 0){
+				if(gameMode == PlayMode.PRACTICE){
+					//PERDISTE
+					var switchTimer = new Timer(2000);
+					switchTimer.run = function(){
+						clearScreen();
+						switchTimer.stop();
+						FlxG.switchState(new SelectModeState());
+					}
+					
+				}
+				else{
+					opponentScore++;
+					this.updateScore();
+				}
+			}
+			else{
+				myScore++;
+				this.updateScore();
+			}
+		}
 		
 	}
 	

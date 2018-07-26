@@ -15,6 +15,10 @@ class Tournament
 	private var semifinalsCountries:Array<Country> = [];
 	private var finalCountries:Array<Country> = [];
 	private var champion:Country;
+	
+	public var quarterFinalPrize = 10;
+	public var semiFinalPrize = 20;
+	public var finalPrize = 40;
 
 	public function new(country : Country) 
 	{

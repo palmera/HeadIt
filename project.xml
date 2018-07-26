@@ -31,5 +31,6 @@
 	
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->
+	<haxedef name="FLX_NO_DEBUG" />
 	
 </project>

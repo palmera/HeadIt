@@ -28,8 +28,7 @@ class Main extends Sprite
 		System.InitializeTeams();
 		removeEventListener(Event.ADDED_TO_STAGE, init);
 		var game = new FlxGame(0, 0, MenuState); 
-		//game.x = 0; 
-		//game.y = 0;
+
 		
 		addChild(game);
 	}

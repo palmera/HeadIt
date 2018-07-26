@@ -91,13 +91,11 @@ class Team extends FlxSpriteGroup {
 	}
 	
 	public function moveRight():Void{
-		SoundManager.Instance().playMove();
 		if(position != 2){
 			position++;
 		}
 	}
 	public function moveLeft():Void{
-		SoundManager.Instance().playMove();
 		if(position != 0){
 			position --;
 		}

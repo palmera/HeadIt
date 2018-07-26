@@ -52,6 +52,6 @@ class MenuState extends FlxState
 	}
 	
 	private function onCredits(): Void{
-		
+		FlxG.switchState(new CreditsState());
 	}
 }
